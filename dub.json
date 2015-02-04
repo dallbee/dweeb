@@ -1,0 +1,11 @@
+{
+	"name": "dweeb",
+	"description": "A simple blog",
+	"copyright": "Copyright © 2015, Dylan Allbee",
+	"authors": ["dylan"],
+	"dependencies": {
+		"vibe-d": "~>0.7.19"
+	},
+	"versions": ["VibeDefaultMain"],
+    "stringImportPaths": ["static/source/templates/"],
+}
