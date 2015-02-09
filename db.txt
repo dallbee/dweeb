@@ -1,0 +1,15 @@
+settings (HMAP)
+    password
+
+page:$page (HMAP)
+    title
+    type
+    list
+    content
+    timestamp
+
+list:$list (ZSET)
+
+
+
+
