@@ -19,7 +19,7 @@ class ContentInterface {
 
     void getPage(HTTPServerRequest req, HTTPServerResponse res)
     {
-        string page = "index";
+        string page = "";
 
         if ("page" in req.params)
             page = req.params["page"];
@@ -28,6 +28,9 @@ class ContentInterface {
 
         if ("type" in data.page) {
             switch (data.page["type"]) {
+                case "index":
+                    getIndex(req, res);
+                    break;
                 case "list":
                     getList(req, res);
                     break;
@@ -38,6 +41,11 @@ class ContentInterface {
                     break;
             }
         }
+    }
+
+    void getIndex(HTTPServerRequest req, HTTPServerResponse res)
+    {
+        render!("content.dt", data)(res);
     }
 
     void getList(HTTPServerRequest req, HTTPServerResponse res)

@@ -19,7 +19,7 @@ shared static this()
     server.sessionIdCookie = "session";
 
     // Database initialization
-    RedisClient client = connectRedis("localhost");
+    RedisClient client = connectRedis("dallbee.com");
     redis = client.getDatabase(0);
 
     // Render data initialization
