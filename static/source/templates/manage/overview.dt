@@ -1,0 +1,8 @@
+extends main
+
+block title
+    title Management
+
+block content
+    a(href="/manage/content") Manage Content
+    a(href="/manage/logout") Logout

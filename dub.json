@@ -4,7 +4,8 @@
 	"copyright": "Copyright © 2015, Dylan Allbee",
 	"authors": ["dylan"],
 	"dependencies": {
-		"vibe-d": "~>0.7.19"
+		"vibe-d": "~>0.7.19",
+        "scrypt-d": ">=0.1.1"
 	},
 	"versions": ["VibeDefaultMain"],
     "stringImportPaths": ["static/source/templates/"],

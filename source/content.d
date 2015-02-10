@@ -2,7 +2,7 @@ module content;
 
 import vibe.d;
 import app;
-import std.stdio;
+import types;
 
 class ContentInterface {
 
@@ -13,14 +13,46 @@ class ContentInterface {
         // ContentInterface Routes
         router.get("/", &getPage);
         router.get("/:page", &getPage);
-        router.get("/:page/:subpage", &getPage);
 
         return router;
     }
 
     void getPage(HTTPServerRequest req, HTTPServerResponse res)
     {
-        render!("main.dt")(res);
+        string page = "index";
+
+        if ("page" in req.params)
+            page = req.params["page"];
+
+        data.page = unzipArray(redis.hgetAll("page:" ~ page));
+
+        if ("type" in data.page) {
+            switch (data.page["type"]) {
+                case "list":
+                    getList(req, res);
+                    break;
+                case "article":
+                    getArticle(req, res);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    void getList(HTTPServerRequest req, HTTPServerResponse res)
+    {
+        import std.stdio;
+
+        /*if ("list" in data.page) {
+            writeln(redis.zget)
+        }*/
+        render!("content.dt", data)(res);
+    }
+
+    void getArticle(HTTPServerRequest req, HTTPServerResponse res)
+    {
+        render!("content.dt", data)(res);
     }
 
 }

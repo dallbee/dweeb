@@ -1,11 +1,15 @@
 import vibe.d;
-//import manage;
+import manage;
 import content;
+import types;
+
+RedisDatabase redis;
+Data data;
 
 shared static this()
 {
     // Initialize resources
-    //setLogFile(settings.logFile, LogLevel.info);
+    //setLogFile("log.txt", LogLevel.info);
     auto server = new HTTPServerSettings;
     server.port = 8080;
     server.errorPageHandler = toDelegate(&errorPage);
@@ -14,17 +18,24 @@ shared static this()
     server.sessionStore = new MemorySessionStore;
     server.sessionIdCookie = "session";
 
+    // Database initialization
+    RedisClient client = connectRedis("localhost");
+    redis = client.getDatabase(0);
+
+    // Render data initialization
+    data = new Data;
+
     // Routing assignments
     auto router = new URLRouter;
     router.get("*", serveStaticFiles("static/public/"));
     router.any("*", &preRequest);
 
     // Load interface routes
-    //auto manageInterface = new ManageInterface;
+    auto manageInterface = new ManageInterface;
     auto contentInterface = new ContentInterface;
 
     // Interface routing assignments
-    //router.any("*", manageInterface.register("/manage"));
+    router.any("*", manageInterface.register("/manage"));
     router.any("*", contentInterface.register());
 
     // Begin the server
@@ -36,9 +47,8 @@ shared static this()
  */
 void preRequest(HTTPServerRequest req, HTTPServerResponse res)
 {
-    if (!req.session) {
+    if (!req.session)
         req.session = res.startSession();
-    }
 }
 
 /**

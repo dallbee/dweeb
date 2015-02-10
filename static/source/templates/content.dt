@@ -1,0 +1,13 @@
+extends main
+
+block title
+    title Dylan Allbee
+
+block content
+    !{data.page["content"]}
+
+
+
+
+
+

@@ -1,0 +1,14 @@
+extends main
+
+block title
+    title Content Manager
+
+block content
+    form(method="POST")
+        input(type="text", name="title")
+        textarea(name="content")
+        button(type="submit") Add Content
+
+
+
+

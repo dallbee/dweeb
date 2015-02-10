@@ -1,0 +1,34 @@
+!!! 5
+html
+    head
+        meta(charset='utf8')
+        meta(http-equiv='X-UA-Compatible', content='IE=edge')
+
+        block title
+
+        meta(name='keywords', content='')
+        meta(name='description', content='')
+        meta(name='viewport', content='width=device-width, initial-scale=1.0')
+
+        link(rel='stylesheet', href='/dist/main.css')
+    body
+        header
+            h1 Dylan Allbee | dallbee.com
+        div
+            nav
+                ul
+                    li
+                        a(href="articles") Articles
+                    li
+                        a(href="projects") Projects
+                    li
+                        a(href="research") Research
+                    li
+                        a(href="about") About Me
+            .content
+                block content
+                footer
+                    p Copyright &copy; 2014-#{data.date.year} Dylan Allbee
+
+
+        script(src="/dist/main.js")

@@ -1,0 +1,13 @@
+extends main
+
+block title
+    title Login!
+
+block content
+    form(method="POST")
+        input(type="password", name="password")
+        button(type="submit") Authenticate
+
+
+
+
