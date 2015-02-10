@@ -1,15 +1,18 @@
+====== Schema ======
 settings (HMAP)
     password
 
-page:$page (HMAP)
+page:$uri (HMAP)
     title
     type
     list
     content
+    description
     timestamp
 
 list:$list (ZSET)
 
-
-
-
+====== Notes ======
+- Use timestamp as score for articles
+- Passwords hashed with scrypt
+- Timestamps in YYYYMMDDHHMMSS
