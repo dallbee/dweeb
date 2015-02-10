@@ -48,7 +48,7 @@ class ManageInterface {
 
     void postLogin(HTTPServerRequest req, HTTPServerResponse res)
     {
-        string hash = redis.get("settings:password");
+        string hash = redis.hget("settings", "password");
 
         if (hash.length && checkScryptPasswordHash(hash, req.form["password"])) {
             req.session.set("admin", true);

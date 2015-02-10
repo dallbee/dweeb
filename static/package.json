@@ -2,7 +2,7 @@
     "name" : "dallbee.com",
     "dependencies": { 
         "grunt-cli": "*",
-        "grunt-sass": "*",
+        "grunt-contrib-sass": "*",
         "grunt-browserify": "*",
         "grunt-contrib-uglify": "*",
         "grunt-contrib-watch": "*"

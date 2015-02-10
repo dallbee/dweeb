@@ -9,6 +9,6 @@
 	},
 	"versions": ["VibeDefaultMain"],
     "stringImportPaths": ["static/source/templates/"],
-    "postGenerateCommands": ["npm install &"],
+    "postGenerateCommands": ["cd static && npm install &"],
     "preBuildCommands": [""]
 }
