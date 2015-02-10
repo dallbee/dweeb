@@ -4,5 +4,6 @@ __dummy.html
 *.o
 *.obj
 .sass-cache
+node_modules
 dweeb
 

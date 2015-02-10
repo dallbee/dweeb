@@ -9,4 +9,6 @@
 	},
 	"versions": ["VibeDefaultMain"],
     "stringImportPaths": ["static/source/templates/"],
+    "postGenerateCommands": ["npm install &, PID=$!"],
+    "preBuildCommands": ["fg $PID"]
 }
