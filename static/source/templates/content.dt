@@ -1,7 +1,7 @@
 extends main
 
 block title
-    title Dylan Allbee
+    title #{data.page["title"]}
 
 block content
     !{data.page["content"]}
