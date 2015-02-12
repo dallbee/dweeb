@@ -2,8 +2,9 @@ import vibe.d;
 import manage;
 import content;
 import types;
+import tinyredis.redis;
 
-RedisDatabase redis;
+Redis redis;
 Data data;
 
 shared static this()
@@ -19,8 +20,7 @@ shared static this()
     server.sessionIdCookie = "session";
 
     // Database initialization
-    RedisClient client = connectRedis("dallbee.com");
-    redis = client.getDatabase(0);
+    redis = new Redis("dallbee.com");
 
     // Render data initialization
     data = new Data;

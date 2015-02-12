@@ -1,13 +1,10 @@
 extends main
 
-block title
+block meta
     title Login!
 
 block content
     form(method="POST")
         input(type="password", name="password")
         button(type="submit") Authenticate
-
-
-
-
+        

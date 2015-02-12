@@ -1,7 +1,8 @@
 extends main
 
-block title
+block meta
     title #{data.page["title"]}
+    meta(name='description', content='#{data.page["description"]}')
 
 block content
     !{data.page["content"]}

@@ -24,7 +24,7 @@ class ContentInterface {
         if ("page" in req.params)
             page = req.params["page"];
 
-        data.page = unzipArray(redis.hgetAll("page:" ~ page));
+        data.page = unzipArray(redis.send("hgetall", "page:"));
 
         if ("type" in data.page) {
             switch (data.page["type"]) {

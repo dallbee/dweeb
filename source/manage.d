@@ -48,7 +48,7 @@ class ManageInterface {
 
     void postLogin(HTTPServerRequest req, HTTPServerResponse res)
     {
-        string hash = redis.hget("settings", "password");
+        string hash = redis.send!string("hget settings password");
 
         if (hash.length && checkScryptPasswordHash(hash, req.form["password"])) {
             req.session.set("admin", true);
@@ -78,8 +78,7 @@ class ManageInterface {
 
     void postContent(HTTPServerRequest req, HTTPServerResponse res)
     {
-        redis.hset("content", req.form["title"], req.form["content"].filterMarkdown);
-
+        redis.send("hset content " ~ req.form["title"] ~ " " ~ req.form["content"].filterMarkdown);
         res.redirect(prefix);
     }
 }
