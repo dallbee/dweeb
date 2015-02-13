@@ -8,6 +8,7 @@ import std.array;
 class Data
 {
     Date date;
+    RedisReply!string pageList;
     string[string] page;
 
     this()

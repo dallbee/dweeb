@@ -27,6 +27,25 @@ module.exports = function(grunt) {
         dest: 'public/dist/js/main.js'
       }
     },
+
+    watch: {
+      grunt: { files: ['Gruntfile.js'] },
+
+      sass: {
+        files: 'source/styles/**/*.scss',
+        tasks: ['sass']
+      },
+
+      browserify: {
+        files: 'source/scripts/**/*.js',
+        tasks: ['browserify']
+      },
+
+      uglify: {
+        files: 'public/dist/js/main.js',
+        tasks: ['uglify']
+      }
+    }
   });
 
   grunt.loadNpmTasks('grunt-browserify');
@@ -35,5 +54,5 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
 
   grunt.registerTask('build', ['sass', 'browserify', 'uglify']);
-  grunt.registerTask('default', ['build']);
+  grunt.registerTask('default', ['build', 'watch']);
 }

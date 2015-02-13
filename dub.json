@@ -10,5 +10,5 @@
 	"versions": ["VibeDefaultMain"],
     "stringImportPaths": ["static/source/templates/"],
     "postGenerateCommands": ["cd static && npm install &"],
-    "preBuildCommands": [""]
+    "preBuildCommands": ["cd static && grunt build &"]
 }

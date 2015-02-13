@@ -1,6 +1,6 @@
 extends main
 
-block title
+block meta
     title Login!
 
 block content

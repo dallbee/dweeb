@@ -3,6 +3,7 @@ module manage;
 import vibe.d;
 import app;
 import scrypt.password;
+import std.stdio;
 
 class ManageInterface {
 
@@ -27,6 +28,7 @@ class ManageInterface {
 
         // Content
         router.get("/content", &getContent);
+        router.get("/content/:val", &getContent);
         router.post("/content", &postContent);
 
         return router;
@@ -73,6 +75,12 @@ class ManageInterface {
 
     void getContent(HTTPServerRequest req, HTTPServerResponse res)
     {
+        writeln("a");
+        data.pageList = redis.keys("page:*");
+        redis.keys("page:*");
+        redis.keys("page:*");
+        redis.keys("page:*");
+        writeln("b");
         render!("manage/content.dt", data)(res);
     }
 

@@ -1,9 +1,14 @@
 extends main
 
-block title
+block meta
     title Content Manager
 
 block content
+    ul
+    -foreach(s; data.pageList)
+        li
+            a(href='/manage/content/#{s}') #{s}
+
     form(method="POST")
         input(type="text", name="title")
         textarea(name="content")
