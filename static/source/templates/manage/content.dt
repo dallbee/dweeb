@@ -13,7 +13,3 @@ block content
         input(type="text", name="title")
         textarea(name="content")
         button(type="submit") Add Content
-
-
-
-

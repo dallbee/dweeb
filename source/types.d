@@ -4,6 +4,7 @@ import vibe.d;
 import app;
 import std.datetime;
 import std.array;
+import tinyredis.redis;
 
 class Data
 {
@@ -17,13 +18,18 @@ class Data
     }
 }
 
-string[string] unzipArray(RedisReply!string arr)
+string[string] unzipArray(Response arr)
 {
+    import std.stdio;
     string[string] content;
-    foreach(string s; arr) {
-        arr.popFront;
-        content[s] = arr.front;
-    }
+    /*foreach(ref v; arr.values) {
+        string key = v.value;
+        
+        v.popFront;
+        content[key] = v.front.value;
+        writeln(key);
+        writeln(v.front.value);
+    }*/
 
     return content;
 }
