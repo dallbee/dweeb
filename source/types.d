@@ -20,16 +20,14 @@ class Data
 
 string[string] unzipArray(Response arr)
 {
-    import std.stdio;
     string[string] content;
-    /*foreach(ref v; arr.values) {
-        string key = v.value;
-        
-        v.popFront;
-        content[key] = v.front.value;
-        writeln(key);
-        writeln(v.front.value);
-    }*/
+    string* key;
+    while(!arr.empty) {
+        key = &(arr.front.value);
+        arr.popFront;
+        content[*key] = arr.front.value;
+        arr.popFront;
+    }
 
     return content;
 }

@@ -75,12 +75,6 @@ class ManageInterface {
 
     void getContent(HTTPServerRequest req, HTTPServerResponse res)
     {
-        writeln("a");
-        data.pageList = redis.keys("page:*");
-        redis.keys("page:*");
-        redis.keys("page:*");
-        redis.keys("page:*");
-        writeln("b");
         render!("manage/content.dt", data)(res);
     }
 
