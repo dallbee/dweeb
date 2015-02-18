@@ -9,66 +9,39 @@ class ContentInterface {
     URLRouter register(string prefix = null)
     {
         auto router = new URLRouter(prefix);
-
-        // ContentInterface Routes
-        router.get("/", &getPage);
-        router.get("/:page", &getPage);
-
-        // All routes call view, no renders in routes?
-        // Can we get rid of req/res boilerplate?
-        // MIXIN? http://forum.dlang.org/thread/pivjmohvywssolnmuzzu@forum.dlang.org
+        router.get("/", &(getPage));
+        router.get("/:page", &(getPage));
 
         return router;
     }
 
     void getPage(HTTPServerRequest req, HTTPServerResponse res)
     {
-        string page = "";
+        view.req = req;
+        view.res = res;
+        view.page = view.loadHmap(redis.send("hgetall", "page:" ~ req.params.get("page", "")));
 
-        if ("page" in req.params)
-            page = req.params["page"];
-
-        view.page = loadHmap(redis.send("hgetall", "page:"));
-
-        // call pointer &("type")?
-
-        if ("type" in view.page)
+        switch (view.page.get("type", "")) 
         {
-            switch (view.page["type"]) {
-                case "index":
-                    getIndex(req, res);
-                    break;
-                case "list":
-                    getList(req, res);
-                    break;
-                case "article":
-                    getArticle(req, res);
-                    break;
-                default:
-                    break;
-            }
+            mixin(makeGetRender("index", "content.dt"));
+            mixin(makeGetRender("list", "content.dt"));
+            mixin(makeGetRender("article", "content.dt"));
+            default: break;
         }
     }
-
-    void getIndex(HTTPServerRequest req, HTTPServerResponse res)
+    
+    void getIndex()
     {
-        render!("content.dt", view)(res);
 
     }
 
-    void getList(HTTPServerRequest req, HTTPServerResponse res)
+    void getList()
     {
-        import std.stdio;
-
-        /*if ("list" in data.page) {
-            writeln(redis.zget)
-        }*/
-        render!("content.dt", view)(res);
+        
     }
 
-    void getArticle(HTTPServerRequest req, HTTPServerResponse res)
+    void getArticle()
     {
-        render!("content.dt", view)(res);
-    }
 
+    }
 }

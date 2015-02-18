@@ -1,11 +1,11 @@
 extends main
 
 block meta
-    title #{data.page["title"]}
-    meta(name='description', content='#{data.page["description"]}')
+    title #{view.page["title"]}
+    meta(name='description', content='#{view.page["description"]}')
 
 block content
-    !{data.page["content"]}
+    !{view.page["content"]}
 
 
 

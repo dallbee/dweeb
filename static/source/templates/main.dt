@@ -26,7 +26,7 @@ html
             .content
                 block content
                 footer
-                    p Copyright &copy; 2014-#{data.date.year} Dylan Allbee
+                    p Copyright &copy; 2014-#{view.date.year} Dylan Allbee
 
 
         script(src="/dist/main.js")

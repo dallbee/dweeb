@@ -1,4 +1,4 @@
-module manage;
+/*module manage;
 
 import vibe.d;
 import app;
@@ -83,3 +83,4 @@ class ManageInterface {
         res.redirect(prefix);
     }
 }
+*/

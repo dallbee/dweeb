@@ -9,15 +9,18 @@ import tinyredis.redis;
 class View
 {
     Date date;
-    RedisReply!string pageList;
     string[string] page;
+    //RedisReply!string pageList;
+    Response[string] data;
+    HTTPServerRequest req;
+    HTTPServerResponse res;
 
     this()
     {
         date = cast(Date)Clock.currTime;
     }
 
-    static string[string] loadHmap(ref Response arr)
+    static string[string] loadHmap(Response arr)
     {
         string[string] map;
         string* key;
@@ -34,4 +37,11 @@ class View
     }
 }
 
-
+string makeGetRender(string page, string dietTemplate)
+{
+    import std.string;
+    return `case "` ~ page ~ `": `
+        `get` ~ capitalize(page) ~ `(); `
+        `render!("` ~ dietTemplate ~ `", view)(res); `
+        `break;`;
+}
