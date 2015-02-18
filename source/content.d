@@ -2,7 +2,7 @@ module content;
 
 import vibe.d;
 import app;
-import types;
+import helper.view;
 
 class ContentInterface {
 
@@ -14,6 +14,10 @@ class ContentInterface {
         router.get("/", &getPage);
         router.get("/:page", &getPage);
 
+        // All routes call view, no renders in routes?
+        // Can we get rid of req/res boilerplate?
+        // MIXIN? http://forum.dlang.org/thread/pivjmohvywssolnmuzzu@forum.dlang.org
+
         return router;
     }
 
@@ -24,10 +28,13 @@ class ContentInterface {
         if ("page" in req.params)
             page = req.params["page"];
 
-        data.page = unzipArray(redis.send("hgetall", "page:"));
+        view.page = loadHmap(redis.send("hgetall", "page:"));
 
-        if ("type" in data.page) {
-            switch (data.page["type"]) {
+        // call pointer &("type")?
+
+        if ("type" in view.page)
+        {
+            switch (view.page["type"]) {
                 case "index":
                     getIndex(req, res);
                     break;
@@ -45,7 +52,8 @@ class ContentInterface {
 
     void getIndex(HTTPServerRequest req, HTTPServerResponse res)
     {
-        render!("content.dt", data)(res);
+        render!("content.dt", view)(res);
+
     }
 
     void getList(HTTPServerRequest req, HTTPServerResponse res)
@@ -55,12 +63,12 @@ class ContentInterface {
         /*if ("list" in data.page) {
             writeln(redis.zget)
         }*/
-        render!("content.dt", data)(res);
+        render!("content.dt", view)(res);
     }
 
     void getArticle(HTTPServerRequest req, HTTPServerResponse res)
     {
-        render!("content.dt", data)(res);
+        render!("content.dt", view)(res);
     }
 
 }

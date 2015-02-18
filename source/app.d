@@ -1,11 +1,11 @@
 import vibe.d;
+import tinyredis.redis;
+import helper.view;
 import manage;
 import content;
-import types;
-import tinyredis.redis;
 
 Redis redis;
-Data data;
+View view;
 
 shared static this()
 {
@@ -23,7 +23,7 @@ shared static this()
     redis = new Redis("dallbee.com");
 
     // Render data initialization
-    data = new Data;
+    view = new View;
 
     // Routing assignments
     auto router = new URLRouter;

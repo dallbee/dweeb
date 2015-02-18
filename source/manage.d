@@ -52,9 +52,8 @@ class ManageInterface {
     {
         string hash = redis.send!string("hget settings password");
 
-        if (hash.length && checkScryptPasswordHash(hash, req.form["password"])) {
+        if (hash.length && checkScryptPasswordHash(hash, req.form["password"]))
             req.session.set("admin", true);
-        }
 
         res.redirect(prefix);
     }
