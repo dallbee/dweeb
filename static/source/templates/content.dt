@@ -6,6 +6,8 @@ block meta
 
 block content
     !{view.page["content"]}
+    !{view.page["content"]}
+    !{view.page["content"]}
 
 
 

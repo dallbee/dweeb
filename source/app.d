@@ -37,6 +37,7 @@ shared static this()
     // Interface routing assignments
     //router.any("*", manageInterface.register("/manage"));
     router.any("*", contentInterface.register());
+    router.get("*", serveStaticFiles("./static/public/"));
 
     // Begin the server
     listenHTTP(server, router);

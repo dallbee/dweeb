@@ -6,6 +6,7 @@ page:$uri (HMAP)
     title
     type
     list
+    abstract
     content
     description
     timestamp

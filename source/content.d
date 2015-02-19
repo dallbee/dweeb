@@ -32,7 +32,10 @@ class ContentInterface {
     
     void getIndex()
     {
-
+        import std.stdio;
+        writeln("test");
+        //redis.send("zrange", "list:", 0, 10);
+        writeln("test");
     }
 
     void getList()

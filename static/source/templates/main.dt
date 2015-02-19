@@ -8,25 +8,25 @@ html
         meta(name='viewport', content='width=device-width, initial-scale=1.0')
 
         link(rel='author', href='/humans.txt')
-        link(rel='stylesheet', href='/dist/main.css')
-    body
-        header
-            h1 Dylan Allbee | dallbee.com
+        link(rel='stylesheet', href='/dist/css/main.css')
+    body    
         div
-            nav
-                ul
-                    li
-                        a(href="articles") Articles
-                    li
-                        a(href="projects") Projects
-                    li
-                        a(href="research") Research
-                    li
-                        a(href="about") About Me
+            header
+                h1 Dylan Allbee
+                nav
+                    ul
+                        li
+                            a(href="articles") Articles
+                        li
+                            a(href="projects") Projects
+                        li
+                            a(href="research") Research
+                        li
+                            a(href="about") About Me
             .content
                 block content
                 footer
                     p Copyright &copy; 2014-#{view.date.year} Dylan Allbee
 
 
-        script(src="/dist/main.js")
+        script(src="/dist/js/main.js")

@@ -10,8 +10,7 @@ class View
 {
     Date date;
     string[string] page;
-    //RedisReply!string pageList;
-    Response[string] data;
+    string[] pageList;
     HTTPServerRequest req;
     HTTPServerResponse res;
 

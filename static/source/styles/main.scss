@@ -1,0 +1,26 @@
+@import "vendor/bourbon/bourbon";
+@import "vendor/neat/neat";
+
+html {
+    font-size: modular-scale(0);
+    font-family: 'Helvetica Neue';
+}
+
+header {
+    position: absolute;
+    width: 30%;
+    left: 0;
+    top: 0;
+    bottom: 0;
+}
+
+header + div {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 70%;
+    overflow-x: auto;
+    background: gray;
+    padding: modular-scale(3);
+}
