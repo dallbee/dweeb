@@ -5,8 +5,7 @@ block meta
     meta(name='description', content='#{view.page["description"]}')
 
 block content
-    !{view.page["content"]}
-    !{view.page["content"]}
+    h2 #{view.page["title"]}
     !{view.page["content"]}
 
 

@@ -21,7 +21,7 @@ class ContentInterface {
         view.res = res;
         view.page = view.loadHmap(redis.send("hgetall", "page:" ~ req.params.get("page", "")));
 
-        switch (view.page.get("type", "")) 
+        switch (view.page.get("type", ""))
         {
             mixin(makeGetRender("index", "content.dt"));
             mixin(makeGetRender("list", "content.dt"));
@@ -29,18 +29,17 @@ class ContentInterface {
             default: break;
         }
     }
-    
+
     void getIndex()
-    {
+    {/*
+        import tinyredis.redis;
         import std.stdio;
-        writeln("test");
-        //redis.send("zrange", "list:", 0, 10);
-        writeln("test");
+        Response[] a = array(redis.send("zrange", "list:", 0, 10));*/
     }
 
     void getList()
     {
-        
+
     }
 
     void getArticle()

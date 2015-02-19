@@ -31,11 +31,11 @@ shared static this()
     router.any("*", &preRequest);
 
     // Load interface routes
-    //auto manageInterface = new ManageInterface;
+    auto manageInterface = new ManageInterface;
     auto contentInterface = new ContentInterface;
 
     // Interface routing assignments
-    //router.any("*", manageInterface.register("/manage"));
+    router.any("*", manageInterface.register("/manage"));
     router.any("*", contentInterface.register());
     router.get("*", serveStaticFiles("./static/public/"));
 

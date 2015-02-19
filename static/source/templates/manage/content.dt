@@ -5,7 +5,7 @@ block meta
 
 block content
     ul
-    -foreach(s; data.pageList)
+    -foreach(s; view.pageList)
         li
             a(href='/manage/content/#{s}') #{s}
 

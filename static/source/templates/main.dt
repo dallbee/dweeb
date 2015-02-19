@@ -9,7 +9,7 @@ html
 
         link(rel='author', href='/humans.txt')
         link(rel='stylesheet', href='/dist/css/main.css')
-    body    
+    body
         div
             header
                 h1 Dylan Allbee
@@ -23,10 +23,11 @@ html
                             a(href="research") Research
                         li
                             a(href="about") About Me
-            .content
-                block content
-                footer
-                    p Copyright &copy; 2014-#{view.date.year} Dylan Allbee
+            div
+                .content
+                    block content
+                    footer
+                        p Copyright &copy; 2014-#{view.date.year} Dylan Allbee
 
 
         script(src="/dist/js/main.js")

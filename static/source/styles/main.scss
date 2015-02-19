@@ -1,17 +1,22 @@
 @import "vendor/bourbon/bourbon";
 @import "vendor/neat/neat";
 
+$padding: modular-scale(2);
+$nav-width: modular-scale(10);
+
 html {
     font-size: modular-scale(0);
-    font-family: 'Helvetica Neue';
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    line-height: 1.5;
 }
 
 header {
     position: absolute;
-    width: 30%;
+    width: $nav-width;
     left: 0;
     top: 0;
     bottom: 0;
+    padding: $padding;
 }
 
 header + div {
@@ -19,8 +24,15 @@ header + div {
     top: 0;
     bottom: 0;
     right: 0;
-    width: 70%;
+    left: $nav-width;
     overflow-x: auto;
-    background: gray;
-    padding: modular-scale(3);
+    padding: $padding;
+}
+
+.content {
+    width: $nav-width * 2.25;
+
+    h2 {
+        border-bottom: 1px solid;
+    }
 }

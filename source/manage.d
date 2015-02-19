@@ -1,4 +1,4 @@
-/*module manage;
+module manage;
 
 import vibe.d;
 import app;
@@ -45,7 +45,7 @@ class ManageInterface {
         if (req.session.isKeySet("admin"))
             res.redirect(prefix);
 
-        render!("manage/login.dt", data)(res);
+        render!("manage/login.dt", view)(res);
     }
 
     void postLogin(HTTPServerRequest req, HTTPServerResponse res)
@@ -68,19 +68,18 @@ class ManageInterface {
 
     void getIndex(HTTPServerRequest req, HTTPServerResponse res)
     {
-        render!("manage/overview.dt", data)(res);
+        render!("manage/overview.dt", view)(res);
     }
 
 
     void getContent(HTTPServerRequest req, HTTPServerResponse res)
     {
-        render!("manage/content.dt", data)(res);
+        render!("manage/content.dt", view)(res);
     }
 
     void postContent(HTTPServerRequest req, HTTPServerResponse res)
     {
-        redis.send("hset content " ~ req.form["title"] ~ " " ~ req.form["content"].filterMarkdown);
+        redis.send("hset", "page:" ~ req.form.get("title", ""), "content", req.form["content"].filterMarkdown);
         res.redirect(prefix);
     }
 }
-*/
