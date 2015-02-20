@@ -74,12 +74,22 @@ class ManageInterface {
 
     void getContent(HTTPServerRequest req, HTTPServerResponse res)
     {
+        view.pageList = view.loadList(redis.send("keys", "page:*"));
         render!("manage/content.dt", view)(res);
     }
 
     void postContent(HTTPServerRequest req, HTTPServerResponse res)
     {
-        redis.send("hset", "page:" ~ req.form.get("title", ""), "content", req.form["content"].filterMarkdown);
+        redis.send("hmset", "page:" ~ req.form.get("uri", ""), 
+                   "title", req.form.get("title", ""),
+                   "type", req.form.get("type", ""),
+                   "list", req.form.get("list", ""),
+                   "description", req.form.get("description", ""),
+                   "abstract", req.form.get("abstract", ""),
+                   "content", req.form["content"],
+                   "timestamp", view.date.toISOString
+                );
+
         res.redirect(prefix);
     }
 }

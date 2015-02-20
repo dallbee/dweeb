@@ -8,7 +8,7 @@ import tinyredis.redis;
 
 class View
 {
-    Date date;
+    DateTime date;
     string[string] page;
     string[] pageList;
     HTTPServerRequest req;
@@ -16,7 +16,7 @@ class View
 
     this()
     {
-        date = cast(Date)Clock.currTime;
+        date = cast(DateTime)Clock.currTime;
     }
 
     static string[string] loadHmap(Response arr)
@@ -34,13 +34,24 @@ class View
 
         return map;
     }
+
+    static string[] loadList(Response arr)
+    {
+        string[] list;
+        foreach(e; arr)
+        {
+            list ~= e.value;
+        }
+
+        return list;
+    }
 }
 
-string makeGetRender(string page, string dietTemplate)
+string makeGetRender(string pageType, string dietTemplate)
 {
     import std.string;
-    return `case "` ~ page ~ `": `
-        `get` ~ capitalize(page) ~ `(); `
+    return `case "` ~ pageType ~ `": `
+        `get` ~ capitalize(pageType) ~ `(); `
         `render!("` ~ dietTemplate ~ `", view)(res); `
         `break;`;
 }

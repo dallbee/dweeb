@@ -9,7 +9,26 @@ block content
         li
             a(href='/manage/content/#{s}') #{s}
 
-    form(method="POST")
+    form(method="POST", action="/manage/content")
+        label(for="title") Title
         input(type="text", name="title")
+
+        label(for="uri") Uri
+        input(type="text", name="uri")
+
+        label(for="type") Type
+        input(type="text", name="type")
+
+        label(for="list") List
+        input(type="text", name="list")
+
+        label(for="description") Description
+        input(type="text", name="description")
+
+        label(for="abstract") Abstract
+        textarea(name="abstract")
+
+        label(for="content") Content
         textarea(name="content")
+
         button(type="submit") Add Content
