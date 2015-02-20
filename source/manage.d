@@ -28,7 +28,7 @@ class ManageInterface {
 
         // Content
         router.get("/content", &getContent);
-        router.get("/content/:val", &getContent);
+        router.get("/content/:page", &getContent);
         router.post("/content", &postContent);
 
         return router;

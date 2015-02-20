@@ -16,13 +16,13 @@ html
                 nav
                     ul
                         li
-                            a(href="articles") Articles
+                            a(href="/articles") Articles
                         li
-                            a(href="projects") Projects
+                            a(href="/projects") Projects
                         li
-                            a(href="research") Research
+                            a(href="/research") Research
                         li
-                            a(href="about") About Me
+                            a(href="/about") About Me
             div
                 .content
                     block content
