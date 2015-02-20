@@ -7,6 +7,6 @@
 		"libev": "4.0.0+4.04",
 		"scrypt-d": "0.1.1",
 		"libasync": "0.6.5",
-		"tinyredis": "2.0.4"
+		"tinyredis": "2.0.5"
 	}
 }

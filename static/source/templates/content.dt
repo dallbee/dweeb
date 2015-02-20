@@ -6,7 +6,7 @@ block meta
 
 block content
     h2 #{view.page["title"]}
-    !{view.page["content"]}
+    !{view.page["content"].filterMarkdown(1)}
 
 
 
