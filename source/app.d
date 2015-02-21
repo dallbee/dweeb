@@ -48,8 +48,6 @@ shared static this()
  */
 void preRequest(HTTPServerRequest req, HTTPServerResponse res)
 {
-    if (!req.session)
-        req.session = res.startSession();
 }
 
 /**

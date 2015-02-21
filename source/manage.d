@@ -14,6 +14,9 @@ class ManageInterface {
         this.prefix = prefix;
         auto router = new URLRouter(prefix);
 
+        // Session
+        router.any("*", &checkSession);
+
         // Login
         router.get("/login", &getLogin);
         router.post("/login", &postLogin);
@@ -32,6 +35,12 @@ class ManageInterface {
         router.post("/content", &postContent);
 
         return router;
+    }
+
+    void checkSession(HTTPServerRequest req, HTTPServerResponse res)
+    {
+        if (!req.session)
+            req.session = res.startSession();
     }
 
     void checkAuth(HTTPServerRequest req, HTTPServerResponse res)
