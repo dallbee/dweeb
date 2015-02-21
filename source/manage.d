@@ -28,7 +28,7 @@ class ManageInterface {
 
         // Content
         router.get("/content", &getContent);
-        router.get("/content/:page", &getContent);
+        router.get("/content/page/:page", &getContent);
         router.post("/content", &postContent);
 
         return router;
@@ -75,18 +75,19 @@ class ManageInterface {
     void getContent(HTTPServerRequest req, HTTPServerResponse res)
     {
         view.pageList = view.loadList(redis.send("keys", "page:*"));
+        view.form = view.loadHmap(redis.send("hgetall", req.params.get("page", "")));
         render!("manage/content.dt", view)(res);
     }
 
     void postContent(HTTPServerRequest req, HTTPServerResponse res)
     {
-        redis.send("hmset", "page:" ~ req.form.get("uri", ""), 
+        redis.send("hmset", "page:" ~ req.form.get("uri", ""),
                    "title", req.form.get("title", ""),
                    "type", req.form.get("type", ""),
                    "list", req.form.get("list", ""),
                    "description", req.form.get("description", ""),
                    "abstract", req.form.get("abstract", ""),
-                   "content", req.form["content"],
+                   "content", req.form.get("content", ""),
                    "timestamp", view.date.toISOString
                 );
 

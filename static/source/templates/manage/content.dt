@@ -7,28 +7,28 @@ block content
     ul
     -foreach(s; view.pageList)
         li
-            a(href='/manage/content/#{s}') #{s}
+            a(href='/manage/content/page/#{s}') #{s[5..$]}
 
-    form(method="POST", action="/manage/content")
-        label(for="title") Title
-        input(type="text", name="title")
+    form(method='POST', action='/manage/content')
+        label(for='title') Title
+        input(type='text', name='title', value='#{view.form.get("title", "")}')
 
-        label(for="uri") Uri
-        input(type="text", name="uri")
+        label(for='uri') Uri
+        input(type='text', name='uri', value='#{view.form.get("uri", "")}')
 
-        label(for="type") Type
-        input(type="text", name="type")
+        label(for='type') Type
+        input(type='text', name='type', value='#{view.form.get("type", "")}')
 
-        label(for="list") List
-        input(type="text", name="list")
+        label(for='list') List
+        input(type='text', name='list', value='#{view.form.get("list", "")}')
 
-        label(for="description") Description
-        input(type="text", name="description")
+        label(for='description') Description
+        input(type='text', name='description', value='#{view.form.get("description", "")}')
 
-        label(for="abstract") Abstract
-        textarea(name="abstract")
+        label(for='abstract') Abstract
+        textarea(name='abstract') #{view.form.get("abstract", "")}
 
-        label(for="content") Content
-        textarea(name="content")
+        label(for='content') Content
+        textarea(name='content') #{view.form.get("content", "")}
 
-        button(type="submit") Add Content
+        button(type='submit') Add Content

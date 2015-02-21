@@ -10,6 +10,7 @@ class View
 {
     DateTime date;
     string[string] page;
+    string[string] form;
     string[] pageList;
     HTTPServerRequest req;
     HTTPServerResponse res;
