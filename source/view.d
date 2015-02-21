@@ -4,13 +4,15 @@ import vibe.d;
 import app;
 import std.datetime;
 import std.array;
+import std.string;
 import tinyredis.redis;
 
 class View
 {
     DateTime date;
+    string uri;
     string[string] page;
-    string[string] form;
+    string[string][string] data;
     string[] pageList;
     HTTPServerRequest req;
     HTTPServerResponse res;
@@ -18,6 +20,11 @@ class View
     this()
     {
         date = cast(DateTime)Clock.currTime;
+    }
+
+    string timestamp()
+    {
+        return removechars(date.toISOString, "^0-9");
     }
 
     static string[string] loadHmap(Response arr)
@@ -36,12 +43,12 @@ class View
         return map;
     }
 
-    static string[] loadList(Response arr)
+    static string[] loadList(Response arr, size_t prefixLength = 0)
     {
         string[] list;
         foreach(e; arr)
         {
-            list ~= e.value;
+            list ~= e.value[prefixLength..$];
         }
 
         return list;

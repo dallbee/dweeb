@@ -1,0 +1,15 @@
+extends main
+
+block meta
+    title #{view.page["title"]}
+    meta(name='description', content='#{view.page["description"]}')
+
+block content
+    -foreach(s; view.pageList)
+        h2 #{view.data[s].get("title", "")}
+        p #{view.data[s].get("abstract", "")}
+
+
+
+
+

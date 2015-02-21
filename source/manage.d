@@ -31,6 +31,7 @@ class ManageInterface {
 
         // Content
         router.get("/content", &getContent);
+        router.get("/content/page/", &getContent);
         router.get("/content/page/:page", &getContent);
         router.post("/content", &postContent);
 
@@ -61,7 +62,7 @@ class ManageInterface {
     {
         string hash = redis.send!string("hget settings password");
 
-        if (hash.length && checkScryptPasswordHash(hash, req.form["password"]))
+        if (hash.length && checkScryptPasswordHash(hash, req.form.get("password", "")))
             req.session.set("admin", true);
 
         res.redirect(prefix);
@@ -83,8 +84,9 @@ class ManageInterface {
 
     void getContent(HTTPServerRequest req, HTTPServerResponse res)
     {
-        view.pageList = view.loadList(redis.send("keys", "page:*"));
-        view.form = view.loadHmap(redis.send("hgetall", req.params.get("page", "")));
+        view.uri = req.params.get("page", "");
+        view.pageList = view.loadList(redis.send("keys", "page:*"), 5);
+        view.data[view.uri] = view.loadHmap(redis.send("hgetall", "page:" ~ view.uri));
         render!("manage/content.dt", view)(res);
     }
 
@@ -93,12 +95,14 @@ class ManageInterface {
         redis.send("hmset", "page:" ~ req.form.get("uri", ""),
                    "title", req.form.get("title", ""),
                    "type", req.form.get("type", ""),
-                   "list", req.form.get("list", ""),
                    "description", req.form.get("description", ""),
                    "abstract", req.form.get("abstract", ""),
                    "content", req.form.get("content", ""),
-                   "timestamp", view.date.toISOString
+                   "timestamp", view.timestamp
                 );
+
+        redis.send("zadd", "list:" ~ req.form.get("type", ""),
+            view.timestamp, req.form.get("uri", ""));
 
         res.redirect(prefix);
     }

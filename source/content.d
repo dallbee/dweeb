@@ -23,18 +23,20 @@ class ContentInterface {
 
         switch (view.page.get("type", ""))
         {
-            mixin(makeGetRender("index", "content.dt"));
-            mixin(makeGetRender("list", "content.dt"));
+            mixin(makeGetRender("index", "index.dt"));
+            mixin(makeGetRender("list", "list.dt"));
             mixin(makeGetRender("article", "content.dt"));
             default: break;
         }
     }
 
     void getIndex()
-    {/*
-        import tinyredis.redis;
-        import std.stdio;
-        Response[] a = array(redis.send("zrange", "list:", 0, 10));*/
+    {
+        view.pageList = view.loadList(redis.send("zrange", "list:article", 0, 100));
+        foreach(e; view.pageList)
+        {
+            view.data[e] = view.loadHmap(redis.send("hgetall", "page:" ~ e));
+        }
     }
 
     void getList()
