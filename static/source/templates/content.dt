@@ -6,7 +6,8 @@ block meta
 
 block content
     h2 #{view.page["title"]}
-    !{view.page["content"].filterMarkdown(1)}
+    -import helper.view;
+    !{view.page["content"].parseMarkdown}
 
 
 

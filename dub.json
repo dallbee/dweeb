@@ -10,4 +10,5 @@
 	},
 	"versions": ["VibeDefaultMain"],
     "stringImportPaths": ["static/source/templates/"],
+    "libs": ["cmark"],
 }

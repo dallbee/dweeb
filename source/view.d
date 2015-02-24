@@ -7,6 +7,8 @@ import std.array;
 import std.string;
 import tinyredis.redis;
 
+extern (C) char * cmark_markdown_to_html(const char *, int);
+
 class View
 {
     DateTime date;
@@ -62,4 +64,9 @@ string makeGetRender(string pageType, string dietTemplate)
         `get` ~ capitalize(pageType) ~ `(); `
         `render!("` ~ dietTemplate ~ `", view)(res); `
         `break;`;
+}
+
+char[] parseMarkdown(string text)
+{
+    return cmark_markdown_to_html(text.toStringz, cast(int)(text.length)).fromStringz;
 }

@@ -15,12 +15,12 @@ shared static this()
     server.port = 8080;
     server.errorPageHandler = toDelegate(&errorPage);
     server.useCompressionIfPossible = true;
-    server.serverString = "dallbee";
+    server.serverString = "allbee";
     server.sessionStore = new MemorySessionStore;
     server.sessionIdCookie = "session";
 
     // Database initialization
-    redis = new Redis("dallbee.com");
+    redis = new Redis("allbee.org");
 
     // Render data initialization
     view = new View;
