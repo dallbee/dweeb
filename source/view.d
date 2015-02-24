@@ -66,7 +66,9 @@ string makeGetRender(string pageType, string dietTemplate)
         `break;`;
 }
 
-char[] parseMarkdown(string text)
+string parseMarkdown(string text)
 {
-    return cmark_markdown_to_html(text.toStringz, cast(int)(text.length)).fromStringz;
+    import std.stdio;
+    writeln(cast(string)cmark_markdown_to_html(removechars(text, "\r").toStringz, cast(int)text.length).fromStringz);
+    return cast(string)cmark_markdown_to_html(removechars(text, "\r").toStringz, cast(int)text.length).fromStringz;
 }
