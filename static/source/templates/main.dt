@@ -20,9 +20,9 @@ html
                         li
                             a(href="/projects") Projects
                         li
-                            a(href="/research") Research
+                            a(href="/research") Resources
                         li
-                            a(href="/about") About Me
+                            a(href="/about") About
             div
                 .content
                     block content

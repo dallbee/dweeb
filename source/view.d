@@ -68,7 +68,6 @@ string makeGetRender(string pageType, string dietTemplate)
 
 string parseMarkdown(string text)
 {
-    import std.stdio;
-    writeln(cast(string)cmark_markdown_to_html(removechars(text, "\r").toStringz, cast(int)text.length).fromStringz);
-    return cast(string)cmark_markdown_to_html(removechars(text, "\r").toStringz, cast(int)text.length).fromStringz;
+    text = removechars(text, "\r");
+    return cast(string)cmark_markdown_to_html(text.toStringz, cast(int)text.length).fromStringz;
 }
