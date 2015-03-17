@@ -5,11 +5,13 @@ block meta
     meta(name='description', content='#{view.page["description"]}')
 
 block content
+
+    input(type='text', name='search')
+
+    .listing
     -foreach(s; view.pageList)
-        h2 #{view.data[s].get("title", "")}
-        p #{view.data[s].get("abstract", "")}
-
-
-
-
-
+        .item
+            .abstract
+                h3
+                    a(href='#{view.data[s].get("title", "")}') #{view.data[s].get("title", "")}
+                p #{view.data[s].get("abstract", "")}

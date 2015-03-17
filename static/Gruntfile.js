@@ -5,10 +5,13 @@ module.exports = function(grunt) {
     sass: {
       dist: {
         options: {
-          style: 'compressed'
+          style: 'compressed',
+          sourcemap: 'none',
+          precision: 4,
         },
         files: {
-          'public/dist/css/main.css': 'source/styles/main.scss'
+          'public/dist/css/main.css': 'source/styles/main.scss',
+          'public/dist/css/manage.css': 'source/styles/manage.scss'
         }
       }
     },

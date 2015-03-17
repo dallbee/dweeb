@@ -9,6 +9,8 @@ html
 
         link(rel='author', href='/humans.txt')
         link(rel='stylesheet', href='/dist/css/main.css')
+        link(rel='stylesheet', href='http://fonts.googleapis.com/css?family=Roboto+Slab:100,700,300')
+        block styles
     body
         div
             header

@@ -1,4 +1,4 @@
-extends main
+extends manage/main
 
 block meta
     title Content Manager
