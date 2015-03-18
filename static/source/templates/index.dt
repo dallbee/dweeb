@@ -6,7 +6,9 @@ block meta
 
 block content
 
-    input(type='text', name='search')
+    p I am a computer engineer with a fondness for optimization, security, and robotics.
+
+    //-input(type='text', name='search')
 
     .listing
     -foreach(s; view.pageList)

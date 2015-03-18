@@ -7,13 +7,20 @@ $nav-width: modular-scale(10);
 html {
     font-size: modular-scale(0);
     font-family: "Roboto Slab", serif;
-    font-weight: 300;
+    font-weight: 400;
     line-height: 1.5;
+    color: #424242;
+    overflow-y: scroll;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
 }
 
 body > div {
     @include outer-container;
-    width: 800px;
+    width: 850px;
     margin: 0 auto;
 }
 
@@ -21,19 +28,35 @@ header {
     text-transform: uppercase;
     text-align: center;
     font-family: 'Montserrat', sans-serif;
+    margin: 80px 0;
+
+    h1 {
+        font-size: modular-scale(5);
+        margin: 20px 0;
+        letter-spacing: 10px;
+        color: #212121;
+    }
 }
 
 nav {
-    ul {
+    font-size: modular-scale(0);
+    letter-spacing: 2px;
 
+    ul {
+        padding: 0;
     }
 
     li {
         display: inline;
+        margin: 0 10px;
     }
 
-    a:link {
-        text-decoration: none;
+    a {
+        color: #666;
+
+        &:hover {
+            color: #aaa;
+        }
     }
 }
 
@@ -42,6 +65,10 @@ nav {
     h2 {
         border-bottom: 1px solid;
     }
+}
+
+.content > p {
+    text-align: center;
 }
 
 .item {
@@ -61,8 +88,6 @@ nav {
         margin: 3px 0;
         padding: 0;
     }
-
-    box-shadow: rgba(0, 0, 0, 0.12) 1px 1px 10px 0px;
 }
 
 .hidden {

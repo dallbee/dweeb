@@ -9,12 +9,14 @@ html
 
         link(rel='author', href='/humans.txt')
         link(rel='stylesheet', href='/dist/css/main.css')
-        link(rel='stylesheet', href='http://fonts.googleapis.com/css?family=Roboto+Slab:100,700,300')
+        link(rel='stylesheet', href='http://fonts.googleapis.com/css?family=Roboto+Slab:400,100,700,300')
+        link(rel='stylesheet', href='http://fonts.googleapis.com/css?family=Montserrat:400,700')
         block styles
     body
         div
             header
-                h1 Dylan Allbee
+                h1
+                    a(href='/') ~Dylan Allbee~
                 nav
                     ul
                         li
