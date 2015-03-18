@@ -33,7 +33,7 @@ class ContentInterface {
 
     void getIndex()
     {
-        view.pageList = view.loadList(redis.send("zrange", "list:article", 0, 5));
+        view.pageList = view.loadList(redis.send("zrange", "list:index", 0, 5));
         foreach(e; view.pageList)
             view.data[e] = view.loadHmap(redis.send("hgetall", "page:" ~ e));
     }

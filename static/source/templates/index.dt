@@ -6,13 +6,14 @@ block meta
 
 block content
 
-    p I am a computer engineer with a fondness for optimization, security, and robotics.
+    p I am a computer engineering student with a fondness for optimization, security, robotics, and software architecture. Have a look at my <a href="/resume"> résumé.
 
+    h2 Featured Articles
     //-input(type='text', name='search')
 
     .listing
     -foreach(s; view.pageList)
-        .item
+        a(href='#', class='item')
             .abstract
                 h3
                     a(href='#{view.data[s].get("title", "")}') #{view.data[s].get("title", "")}

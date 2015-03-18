@@ -14,13 +14,12 @@ html {
 }
 
 a {
-    text-decoration: none;
     color: inherit;
 }
 
 body > div {
     @include outer-container;
-    width: 850px;
+    width: 800px;
     margin: 0 auto;
 }
 
@@ -29,6 +28,10 @@ header {
     text-align: center;
     font-family: 'Montserrat', sans-serif;
     margin: 80px 0;
+
+    a {
+        text-decoration: none;
+    }
 
     h1 {
         font-size: modular-scale(5);
@@ -68,13 +71,13 @@ nav {
 }
 
 .content > p {
-    text-align: center;
+    text-align: left;
 }
 
 .item {
-    padding: 10px;
     width: 50%;
     float: left;
+    display: block;
 }
 
 .abstract {

@@ -20,7 +20,7 @@ html
                 nav
                     ul
                         li
-                            a(href="/") Articles
+                            a(href="/articles") Articles
                         li
                             a(href="/projects") Projects
                         li
