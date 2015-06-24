@@ -4,7 +4,7 @@ import helper.view;
 import manage;
 import content;
 
-Redis redis;
+//Redis redis;
 View view;
 
 shared static this()
@@ -16,11 +16,9 @@ shared static this()
     server.errorPageHandler = toDelegate(&errorPage);
     server.useCompressionIfPossible = true;
     server.serverString = "allbee";
-    server.sessionStore = new MemorySessionStore;
-    server.sessionIdCookie = "session";
 
     // Database initialization
-    redis = new Redis("allbee.org");
+    //redis = new Redis("allbee.org");
 
     // Render data initialization
     view = new View;
@@ -35,7 +33,6 @@ shared static this()
     auto contentInterface = new ContentInterface;
 
     // Interface routing assignments
-    router.any("*", manageInterface.register("/manage"));
     router.any("*", contentInterface.register());
     router.get("*", serveStaticFiles("./static/public/"));
 
