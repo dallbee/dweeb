@@ -1,11 +1,10 @@
 import vibe.d;
 import tinyredis.redis;
-import helper.view;
-import manage;
+//import helper.view;
 import content;
 
 //Redis redis;
-View view;
+//View view;
 
 shared static this()
 {
@@ -21,7 +20,7 @@ shared static this()
     //redis = new Redis("allbee.org");
 
     // Render data initialization
-    view = new View;
+    //view = new View;
 
     // Routing assignments
     auto router = new URLRouter;
@@ -29,7 +28,7 @@ shared static this()
     router.any("*", &preRequest);
 
     // Load interface routes
-    auto manageInterface = new ManageInterface;
+    //auto manageInterface = new ManageInterface;
     auto contentInterface = new ContentInterface;
 
     // Interface routing assignments
@@ -52,5 +51,5 @@ void preRequest(HTTPServerRequest req, HTTPServerResponse res)
  */
 void errorPage(HTTPServerRequest req, HTTPServerResponse res, HTTPServerErrorInfo error)
 {
-    res.render!("error.dt", req, error);
+    //res.render!("error.dt", req, error);
 }

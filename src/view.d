@@ -1,4 +1,4 @@
-module helper.view;
+/*module helper.view;
 
 import vibe.d;
 import app;
@@ -71,3 +71,4 @@ string parseMarkdown(string text)
     text = removechars(text, "\r");
     return cast(string)cmark_markdown_to_html(text.toStringz, cast(int)text.length).fromStringz;
 }
+*/
