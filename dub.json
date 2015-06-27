@@ -9,6 +9,6 @@
         	"scrypt-d": "~>0.1.1"
 	},
 	"versions": ["VibeDefaultMain"],
-    "stringImportPaths": ["static/source/templates/"],
+    "stringImportPaths": ["static/templates/"],
     "libs": ["cmark"],
 }
