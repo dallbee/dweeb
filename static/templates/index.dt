@@ -1,8 +1,8 @@
 extends main
 
 block meta
-    title #{view.page["title"]}
-    meta(name='description', content='#{view.page["description"]}')
+    title t
+    meta(name='description', content='d')
 
 block content
 
@@ -10,11 +10,3 @@ block content
 
     h2 Featured Articles
     //-input(type='text', name='search')
-
-    .listing
-    -foreach(s; view.pageList)
-        a(href='#', class='item')
-            .abstract
-                h3
-                    a(href='#{view.data[s].get("title", "")}') #{view.data[s].get("title", "")}
-                p #{view.data[s].get("abstract", "")}

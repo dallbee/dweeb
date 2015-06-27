@@ -1,10 +1,8 @@
 extends main
 
 block meta
-    title #{view.page["title"]}
-    meta(name='description', content='#{view.page["description"]}')
+    title t
+    meta(name='description', content='d')
 
 block content
-    h2 #{view.page["title"]}
-    -import helper.view;
-    !{view.page["content"].parseMarkdown}
+    h2 dtra

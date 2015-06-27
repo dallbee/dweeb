@@ -1,11 +1,10 @@
 extends main
 
 block meta
-    title #{view.page["title"]}
-    meta(name='description', content='#{view.page["description"]}')
+    title 
+    meta(name='description', content='content')
 
 block content
-    !{view.page["content"].filterMarkdown(1)}
 
 
 
