@@ -1,0 +1,14 @@
+extends main
+
+block meta
+    title #{view.page["title"]}
+    meta(name='description', content='#{view.page["description"]}')
+
+block content
+    !{view.page["content"].filterMarkdown(1)}
+
+
+
+
+
+
