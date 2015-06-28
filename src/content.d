@@ -3,9 +3,8 @@ module content;
 import vibe.d;
 import app;
 import std.file;
-//import helper.view;
-
-extern (C) char * cmark_markdown_to_html(const char *, int, int);
+import vibe.db.redis.redis;
+import view;
 
 class ContentInterface {
 
@@ -67,12 +66,6 @@ class ContentInterface {
         // Update redis entry
 
         return text;
-    }
-
-    string parseMarkdown(string text)
-    {
-        text = removechars(text, "\r");
-        return cast(string)cmark_markdown_to_html(text.toStringz, cast(int)text.length, 0).fromStringz;
     }
 
     void getIndex(HTTPServerRequest req, HTTPServerResponse res)

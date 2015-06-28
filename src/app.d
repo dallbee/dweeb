@@ -1,10 +1,7 @@
 import vibe.d;
-import tinyredis.redis;
-//import helper.view;
+import vibe.db.redis.redis;
 import content;
-
-//Redis redis;
-//View view;
+import view;
 
 shared static this()
 {
@@ -16,16 +13,16 @@ shared static this()
     server.useCompressionIfPossible = true;
     server.serverString = "allbee";
 
-    // Database initialization
-    //redis = new Redis("allbee.org");
+    auto data = new ViewData;
 
-    // Render data initialization
-    //view = new View;
+    // Database initialization
+    auto redis = new RedisClient("allbee.org");
+    data.db = redis.getDatabase(0);
 
     // Routing assignments
     auto router = new URLRouter;
     router.get("*", serveStaticFiles("static/public/"));
-    router.any("*", &preRequest);
+    router.any("*", mixin(routeDelegate!"preRequest"));
 
     // Load interface routes
     //auto manageInterface = new ManageInterface;
@@ -42,8 +39,10 @@ shared static this()
 /**
  * Hooks into the request before any other routing is done
  */
-void preRequest(HTTPServerRequest req, HTTPServerResponse res)
+void preRequest(HTTPServerRequest req, HTTPServerResponse res, ViewData data)
 {
+    data.req = req;
+    data.res = res;
 }
 
 /**

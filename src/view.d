@@ -1,21 +1,24 @@
-/*module helper.view;
+module view;
 
 import vibe.d;
 import app;
 import std.datetime;
 import std.array;
 import std.string;
-import tinyredis.redis;
+import vibe.db.redis.redis;
 
-extern (C) char * cmark_markdown_to_html(const char *, int);
+extern (C) char * cmark_markdown_to_html(const char *, int, int);
 
-class View
+template routeDelegate(string route)
+{
+    const char[] routeDelegate = 
+        `delegate (HTTPServerRequest req, HTTPServerResponse res) => ` ~ route ~ `(req, res, data)`;
+}
+
+class ViewData
 {
     DateTime date;
-    string uri;
-    string[string] page;
-    string[string][string] data;
-    string[] pageList;
+    RedisDatabase db;
     HTTPServerRequest req;
     HTTPServerResponse res;
 
@@ -28,47 +31,10 @@ class View
     {
         return removechars(date.toISOString, "^0-9");
     }
-
-    static string[string] loadHmap(Response arr)
-    {
-        string[string] map;
-        string* key;
-
-        while(!arr.empty)
-        {
-            key = &(arr.front.value);
-            arr.popFront;
-            map[*key] = arr.front.value;
-            arr.popFront;
-        }
-
-        return map;
-    }
-
-    static string[] loadList(Response arr, size_t prefixLength = 0)
-    {
-        string[] list;
-        foreach(e; arr)
-        {
-            list ~= e.value[prefixLength..$];
-        }
-
-        return list;
-    }
-}
-
-string makeGetRender(string pageType, string dietTemplate)
-{
-    import std.string;
-    return `case "` ~ pageType ~ `": `
-        `get` ~ capitalize(pageType) ~ `(); `
-        `render!("` ~ dietTemplate ~ `", view)(res); `
-        `break;`;
 }
 
 string parseMarkdown(string text)
 {
     text = removechars(text, "\r");
-    return cast(string)cmark_markdown_to_html(text.toStringz, cast(int)text.length).fromStringz;
+    return cast(string)cmark_markdown_to_html(text.toStringz, cast(int)text.length, 0).fromStringz;
 }
-*/
