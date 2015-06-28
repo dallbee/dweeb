@@ -21,9 +21,13 @@ class ContentInterface {
         router.get("/project/:project", &getContent);
         //router.get("/privacy", &getPage);
         router.get("/", &getIndex);
-        import std.stdio; writeln(getContentList("content"));
 
         return router;
+    }
+
+    this()
+    {
+        refreshContentList(contentDir);
     }
 
     /**
@@ -49,16 +53,14 @@ class ContentInterface {
 
     string readContent(string name)
     {
-        if (!(name in contentList)) {
-            // Throw error
-        }
+        if (!(name in contentList))
+            throw new HTTPStatusException(HTTPStatus.notFound);
 
         // Get from redis
 
         string path = contentDir ~ name ~ ".md";
-        if (!exists(path)) {
-            // throw error
-        }
+        if (!exists(path))
+            throw new HTTPStatusException(HTTPStatus.notFound);
 
         string text = parseMarkdown(readText(path));
 
@@ -79,17 +81,18 @@ class ContentInterface {
         foreach(e; view.pageList)
             view.data[e] = view.loadHmap(redis.send("hgetall", "page:" ~ e));
         */
-        render!("index.dt");
+        res.render!("index.dt");
     }
 
     void getListing(HTTPServerRequest req, HTTPServerResponse res)
     {
-        render!("listing.dt");
+        res.render!("listing.dt");
     }
 
     void getContent(HTTPServerRequest req, HTTPServerResponse res)
     {
-        render!("content.dt");
+        string content = readContent(req.path[1..$]);
+        res.render!("content.dt", content);
     }
 
     /**
@@ -108,7 +111,7 @@ class ContentInterface {
         import std.path: stripExtension;
         import std.ascii: isLower;
 
-        uint pos = cast(uint)dir.length + 1;
+        uint pos = cast(uint)dir.length;
 
         return dirEntries(dir, SpanMode.depth)
             .filter!(a => a.isFile && endsWith(a.name, ".md") && isLower(a[pos]))

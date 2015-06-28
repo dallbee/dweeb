@@ -5,4 +5,4 @@ block meta
     meta(name='description', content='d')
 
 block content
-    h2 dtra
+    div !{content}

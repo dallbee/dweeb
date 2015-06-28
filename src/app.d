@@ -51,5 +51,5 @@ void preRequest(HTTPServerRequest req, HTTPServerResponse res)
  */
 void errorPage(HTTPServerRequest req, HTTPServerResponse res, HTTPServerErrorInfo error)
 {
-    //res.render!("error.dt", req, error);
+    res.render!("error.dt", req, error);
 }
