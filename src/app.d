@@ -18,6 +18,7 @@ shared static this()
     // Database initialization
     auto redis = new RedisClient("allbee.org");
     data.db = redis.getDatabase(0);
+    data.db.deleteAll();
 
     // Routing assignments
     auto router = new URLRouter;
