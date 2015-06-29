@@ -29,7 +29,7 @@ shared static this()
     auto contentInterface = new ContentInterface;
 
     // Interface routing assignments
-    router.any("*", contentInterface.register());
+    router.any("*", contentInterface.register(data));
     router.get("*", serveStaticFiles("./static/public/"));
 
     // Begin the server
