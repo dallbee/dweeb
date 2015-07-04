@@ -1,14 +1,12 @@
 {
-	"name": "dweeb",
-	"description": "A simple blog",
-	"copyright": "Copyright © 2015, Dylan Allbee",
-	"authors": ["dylan"],
-	"dependencies": {
-		"vibe-d": "~>0.7.24-beta.1",
-        	"tinyredis": "~>2.0.5",
-        	"scrypt-d": "~>0.1.1"
-	},
-	"versions": ["VibeDefaultMain"],
+    "name": "dweeb",
+    "description": "A simple blog",
+    "copyright": "Copyright © 2015, Dylan Allbee",
+    "authors": ["dylan"],
+    "dependencies": {
+        "vibe-d": "~>0.7.24-beta.1",
+    },
+    "versions": ["VibeDefaultMain"],
     "stringImportPaths": ["static/templates/"],
     "libs": ["cmark"],
 }
