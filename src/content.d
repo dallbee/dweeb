@@ -4,8 +4,10 @@ import vibe.d;
 import app;
 import std.file;
 import std.path;
+import std.ascii;
 import vibe.db.redis.redis;
 import view;
+
 
 class ContentInterface {
 
@@ -44,7 +46,7 @@ class ContentInterface {
 
         watcher = watchDirectory("content/");
 
-        while(true) {  
+        while(true) {
             watcher.readChanges(changes);
             foreach(c; changes)
                 updateContentList(c);
@@ -52,7 +54,7 @@ class ContentInterface {
     }
 
     /**
-     * Updates the contentList cache to reflect any changes to files within the 
+     * Updates the contentList cache to reflect any changes to files within the
      * content folder.
      *
      * Params:
@@ -62,6 +64,9 @@ class ContentInterface {
     void updateContentList(DirectoryChange change)
     {
         string name = stripExtension(change.path.toString[contentDir.length..$]);
+        if (!isLower(name[0]) || !endsWith(name, ".md"))
+            return;
+
         switch(change.type) {
             case DirectoryChangeType.added:
                 contentList[name] = false;
@@ -168,7 +173,6 @@ class ContentInterface {
     {
         import std.algorithm: filter;
         import std.array: array;
-        import std.ascii: isLower;
 
         uint pos = cast(uint)dir.length;
 

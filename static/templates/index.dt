@@ -5,8 +5,9 @@ block meta
     meta(name='description', content='d')
 
 block content
+    article
 
-    p I am a computer engineering student with a fondness for optimization, security, robotics, and software architecture. Have a look at my <a href="/resume"> résumé.
+        h1 Featured Articles
+        //-input(type='text', name='search')
 
-    h2 Featured Articles
-    //-input(type='text', name='search')
+        p I am a computer engineering student with a fondness for optimization, security, robotics, and software architecture. Have a look at my <a href="/resume"> résumé.

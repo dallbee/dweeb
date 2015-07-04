@@ -1,103 +1,86 @@
-@import "vendor/bourbon/bourbon";
-@import "vendor/neat/neat";
+@import "bourbon/bourbon";
+@import "variables";
+@import "neat/neat";
 
-$padding: modular-scale(2);
-$nav-width: modular-scale(10);
-
-html {
+body {
+    line-height: modular-scale(1);
     font-size: modular-scale(0);
-    font-family: "Roboto Slab", serif;
-    font-weight: 400;
-    line-height: 1.5;
-    color: #424242;
-    overflow-y: scroll;
-}
-
-a {
-    color: inherit;
+    font-family: 'Raleway';
+    color: $text;
+    background: #fffff2;
+    margin: 0;
 }
 
 body > div {
     @include outer-container;
-    width: 800px;
-    margin: 0 auto;
-}
-
-header {
-    text-transform: uppercase;
-    text-align: center;
-    font-family: 'Montserrat', sans-serif;
-    margin: 80px 0;
-
-    a {
-        text-decoration: none;
-    }
-
-    h1 {
-        font-size: modular-scale(5);
-        margin: 20px 0;
-        letter-spacing: 10px;
-        color: #212121;
-    }
+    margin: 30px 0 0 50px;
 }
 
 nav {
-    font-size: modular-scale(0);
-    letter-spacing: 2px;
+    @include span-columns(2);
+    @include shift(1);
+    @include media($mobile) {
+        @include span-columns(3);
+    }
+
+    margin-top: 2 * modular-scale(3);
+
+    text-align: left;
 
     ul {
         padding: 0;
+        margin: 0 0 25px 0;
     }
 
     li {
-        display: inline;
-        margin: 0 10px;
+        list-style-type: none;
     }
 
     a {
-        color: #666;
+        text-decoration: none;
+        color: #444;
+    }
 
-        &:hover {
-            color: #aaa;
-        }
+    a:hover {
+        color: $link;
+        text-decoration: underline;
     }
 }
 
-.content {
-
-    h2 {
-        border-bottom: 1px solid;
+content {
+    text-align: justify;
+    @include span-columns(9);
+    @include omega();
+    @include media($mobile) {
+        @include span-columns(3);
     }
-}
-
-.content > p {
-    text-align: left;
-}
-
-.item {
-    width: 50%;
-    float: left;
-    display: block;
-}
-
-.abstract {
-    height: 80px;
-
-    h3 {
-        margin: 0;
-    }
-
-    p {
-        margin: 3px 0;
-        padding: 0;
-    }
-}
-
-.hidden {
-    display: none;
 }
 
 footer {
     text-align: center;
-    clear: both;
+    @include span-columns(12);
+    @include media($mobile) {
+        @include span-columns(3);
+    }
+}
+
+h1,h2,h3 {line-height:1.2; font-weight: 700; margin-top: 0}
+h1 {
+    font-size: modular-scale(2);
+    line-height: modular-scale(3);
+    margin: 0;
+}
+h2 {
+    font-size: modular-scale(1);
+    line-height: modular-scale(2);
+    margin: 0;
+}
+
+code {
+    font-size: modular-scale(0);
+    font-family: 'Source Code Pro';
+}
+
+p {
+    margin-top: 0;
 }

@@ -8,30 +8,38 @@ html
         meta(name='viewport', content='width=device-width, initial-scale=1.0')
 
         link(rel='author', href='/humans.txt')
-        link(rel='stylesheet', href='/dist/css/main.css')
-        link(rel='stylesheet', href='http://fonts.googleapis.com/css?family=Roboto+Slab:400,100,700,300')
-        link(rel='stylesheet', href='http://fonts.googleapis.com/css?family=Montserrat:400,700')
+        link(rel='stylesheet', href='/css/main.css')
+        link(rel='stylesheet', href='http://fonts.googleapis.com/css?family=Raleway:400,700')
+        link(rel='stylesheet', href='http://fonts.googleapis.com/css?family=Source+Code+Pro')
         block styles
     body
         div
-            header
-                h1
-                    a(href='/') ~Dylan Allbee~
-                nav
-                    ul
-                        li
-                            a(href="/articles") Articles
-                        li
-                            a(href="/projects") Projects
-                        li
-                            a(href="/research") Resources
-                        li
-                            a(href="/about") About
-            div
-                .content
-                    block content
-                    footer
-                        p Copyright &copy; 2014-$year Dylan Allbee
+            nav
+                ul
+                    li
+                        strong Allbee.org
+                    li
+                        a(href='/articles/') Writings
+                    li
+                        a(href='/projects/') Projects
+                    li
+                        a(href='/resources') Resources
+                    li
+                        a(href='/privacy') Privacy
+                    li
+                        a(href='/about') About
+                ul
+                    li
+                        strong Profiles
+                    li
+                        a(href='https://github.com/dallbee') GitHub
+                    li
+                        a(href='https://linkedin.com/in/dallbee') LinkedIn
 
+            content
+                block content
+
+            footer
+                p Copyright &copy; 2014-$year by Dylan Allbee
 
         script(src="/dist/js/main.js")

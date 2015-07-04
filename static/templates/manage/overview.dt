@@ -1,8 +1,0 @@
-extends main
-
-block meta
-    title Management
-
-block content
-    a(href="/manage/content") Manage Content
-    a(href="/manage/logout") Logout
