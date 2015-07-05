@@ -1,13 +1,21 @@
 extends main
 
 block meta
-    title t
-    meta(name='description', content='d')
+    title #{ content["title"] }
+    meta(name='description', content=content["description"])
 
 block content
-    article
+    section
+        h2 #{ article["title"] }
+        p !{ article["abstract"] }
+        time #{ article["date"] }
 
-        h1 Featured Articles
-        //-input(type='text', name='search')
+    section
+        h2 #{ project["title"] }
+        p !{ project["abstract"] }
+        time #{ article["date"] }
 
-        p I am a computer engineering student with a fondness for optimization, security, robotics, and software architecture. Have a look at my
+    section
+        h2 #{ content["title"] }
+        p !{ content["abstract"] }
+        time #{ article["date"] }

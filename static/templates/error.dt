@@ -1,1 +1,1 @@
-404
+Whoops, #{ req.path } doesn't seem to exist!

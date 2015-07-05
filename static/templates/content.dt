@@ -5,4 +5,5 @@ block meta
     meta(name='description', content=content["description"])
 
 block content
-    article !{content["body"]}
+    article !{ content["body"] }
+    time #{ content["date"] }

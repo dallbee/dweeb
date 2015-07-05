@@ -27,8 +27,6 @@ html
                         a(href='/resources') Resources
                     li
                         a(href='/privacy') Privacy
-                    li
-                        a(href='/about') About
                 ul
                     li
                         strong Profiles
