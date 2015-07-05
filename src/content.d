@@ -108,7 +108,16 @@ class ContentInterface {
     }
 
     /**
-     * Needs documentation
+     * Parses metadata out of the first lines of a content document
+     *
+     * Metadata should be in the following format:
+     * [key] value
+     *
+     * The first line not matching that format will stop the parse, and the
+     * rest of the document is then treated as markdown content.
+     *
+     * Params:
+     *  content = The fulltext string to parse.
      */
     string[string] parseContent(string content)
     {
@@ -143,7 +152,7 @@ class ContentInterface {
     }
 
     /**
-     * Finds and returns a rendered content document
+     * Finds and returns a rendered content hash
      *
      * If a rendered version of a document cannot be found in the cache, the
      * raw markdown content is pulled from the filesystem, parsed, and inserted
@@ -153,8 +162,6 @@ class ContentInterface {
      *  name = The path of the file relative to the content directory, without
      *      an extension.
      *  db = A handle to the Redis connection pool
-     * ----
-     Needs to be updated
      */
     string[string] readContent(string name, RedisDatabase db)
     {
