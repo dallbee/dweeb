@@ -34,7 +34,7 @@ While everything should run fine on a default linux install, there's some tuning
 
 - `fs.inotify.max_user_watches` Any process that listens for directory modifications will use one "watch" per file/directory. Dweeb has several thousand files associated with it, and so simply having an auto reload script running in tandem with dweeb's content watcher is likely enough to go over the default limit of 8192. I usually increase this by at least a factor of two.
 - `fs.file-max` One item of this resource is used per static file served, per concurrent user. The default is usually good enough but this may need to be increased for a high-load server.
-- Add notime to the mount option for your filesystem to remove access time from file statistics.
+- Add noatime to the mount option for your filesystem to remove access time from file statistics.
 
 
 Contributors
