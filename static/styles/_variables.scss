@@ -1,7 +1,7 @@
 @import "colors";
 @import "neat/neat";
 
-$max-width: em(940);
+$max-width: em(935);
 $breakpoint: em(1170);
 $modular-scale-base: 1.125em;
 
@@ -12,3 +12,5 @@ $full: new-breakpoint(min-width $breakpoint 12);
 // Colors
 $text: color($grey, 800);
 $link: color($grey, 900);
+$primary: $grey;
+$secondary: $blue-grey;

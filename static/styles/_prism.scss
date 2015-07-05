@@ -5,19 +5,13 @@
  * @author Lea Verou
  */
 
+ @import "colors";
+
 .token.comment,
 .token.prolog,
 .token.doctype,
 .token.cdata {
-	color: slategray;
-}
-
-.token.punctuation {
-	color: #999;
-}
-
-.namespace {
-	opacity: .7;
+	color: color($grey, 500);
 }
 
 .token.property,
@@ -27,7 +21,7 @@
 .token.constant,
 .token.symbol,
 .token.deleted {
-	color: #905;
+	color: color($purple, 700);
 }
 
 .token.selector,
@@ -36,7 +30,7 @@
 .token.char,
 .token.builtin,
 .token.inserted {
-	color: #690;
+	color: color($green, 700);
 }
 
 .token.operator,
@@ -44,30 +38,30 @@
 .token.url,
 .language-css .token.string,
 .style .token.string {
-	color: #a67f59;
-	background: hsla(0, 0%, 100%, .5);
+	color: color($brown, 700);
 }
 
 .token.atrule,
 .token.attr-value,
 .token.keyword {
-	color: #07a;
+	color: color($light-blue, 700);
 }
 
 .token.function {
-	color: #DD4A68;
+	color: color($pink, 700);
 }
 
 .token.regex,
 .token.important,
 .token.variable {
-	color: #e90;
+	color: color($amber, 700);
 }
 
 .token.important,
 .token.bold {
 	font-weight: bold;
 }
+
 .token.italic {
 	font-style: italic;
 }
