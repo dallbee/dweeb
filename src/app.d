@@ -8,7 +8,7 @@ shared static this()
     // Initialize resources
     //setLogFile("log.txt", LogLevel.info);
     auto server = new HTTPServerSettings;
-    server.port = 8080;
+    server.port = 8000;
     server.errorPageHandler = toDelegate(&errorPage);
     server.useCompressionIfPossible = true;
     server.serverString = "allbee";

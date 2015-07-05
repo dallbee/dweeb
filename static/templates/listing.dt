@@ -1,14 +1,18 @@
 extends main
 
 block meta
-    title
-    meta(name='description', content='content')
+    title Articles on my site!
+    meta(name='description', content='A list of articles!')
 
 block content
     h1 Articles
     - import std.algorithm;
-    - foreach(e; list)
-        a(href=e) #{ e[(prefix.length + 1)..$] }
+    - foreach(name, content; contents)
+        a(href=name)
+            h2 #{ content["title"] }
+        time #{ content["date"] }
+        p !{ content["abstract"] }
+
 
 
 

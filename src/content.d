@@ -6,12 +6,13 @@ import std.file;
 import std.path;
 import std.ascii;
 import vibe.db.redis.redis;
+import vibe.db.redis.types;
 import view;
 
 
 class ContentInterface {
 
-    private bool[string] contentHash;
+    private bool[string] contentSet;
     string contentDir = "content/";
 
     URLRouter register(ViewData data, string prefix = null)
@@ -21,7 +22,9 @@ class ContentInterface {
         router.get("/article/:article", mixin(routeDelegate!"getContent"));
         router.get("/projects", mixin(routeDelegate!"getListing"));
         router.get("/project/:project", mixin(routeDelegate!"getContent"));
-        //router.get("/privacy", mixin(routeDelegate!"getPage"));
+        router.get("/resources", mixin(routeDelegate!"getContent"));
+        router.get("/about", mixin(routeDelegate!"getContent"));
+        router.get("/privacy", mixin(routeDelegate!"getPrivacy"));
         router.get("/", mixin(routeDelegate!"getIndex"));
 
         return router;
@@ -29,7 +32,7 @@ class ContentInterface {
 
     this()
     {
-        generateContentHash(contentDir);
+        generateContentSet(contentDir);
 
         runTask({
             watchContent();
@@ -46,58 +49,97 @@ class ContentInterface {
 
         watcher = watchDirectory("content/");
 
-        while(true) {
+        while (true) {
             watcher.readChanges(changes);
             foreach(c; changes)
-                updateContentHash(c);
+                updateContentSet(c);
         }
     }
 
     /**
-     * Updates the contentHash cache to reflect any changes to files within the
+     * Updates the contentSet cache to reflect any changes to files within the
      * content folder.
+     *
+     * Filenames beginning with an uppercase letter are ignored.
      *
      * Params:
      *  change = The type of modification that was made, and the path to the
      *      respective file.
      */
-    void updateContentHash(DirectoryChange change)
+    void updateContentSet(DirectoryChange change)
     {
-        string name = stripExtension(change.path.toString[contentDir.length..$]);
+        string name = change.path.toString[contentDir.length..$];
         if (!isLower(name[0]) || !endsWith(name, ".md"))
             return;
 
-        switch(change.type) {
+        name = stripExtension(name);
+
+        switch (change.type) {
             case DirectoryChangeType.added:
-                contentHash[name] = false;
+                contentSet[name] = false;
                 break;
             case DirectoryChangeType.modified:
-                contentHash[name] = false;
+                contentSet[name] = false;
                 break;
             case DirectoryChangeType.removed:
-                contentHash.remove(name);
+                contentSet.remove(name);
                 break;
             default:
         }
     }
 
     /**
-     * Inserts the list of content files into the contentHash.
+     * Inserts the list of content files into the contentSet.
      *
-     * This operation destroys the existing contentHash.
+     * This operation destroys the existing contentSet.
      *
      * Params:
      *  dir = The path (relative or absolute) to the directory to scan
      */
-    void generateContentHash(const string dir)
+    void generateContentSet(const string dir)
     {
         bool[string] tmpList;
 
-        foreach(s; getcontentHash(dir))
+        foreach(s; getcontentSet(dir))
             tmpList[s] = false;
 
         tmpList.rehash;
-        contentHash = tmpList;
+        contentSet = tmpList;
+    }
+
+    /**
+     * Needs documentation
+     */
+    string[string] parseContent(string content)
+    {
+        string[string] data;
+        import std.string;
+        import std.regex;
+
+        string line;
+        ulong end;
+
+        // Matches [key] value
+        auto pattern = ctRegex!(`\[(\w*)\] *(.*)`);
+
+        while (true) {
+            end = content[0..$].indexOf('\n');
+
+            // Reminder: end is unsigned
+            if (end >= content.length - 1)
+                break;
+
+            auto match = matchFirst(content[0..end++], pattern);
+
+            if (match.empty)
+                break;
+
+            data[match[1]] = match[2];
+            content = content[end..$];
+        }
+
+        data["body"] = parseMarkdown(content);
+        return data;
     }
 
     /**
@@ -111,33 +153,49 @@ class ContentInterface {
      *  name = The path of the file relative to the content directory, without
      *      an extension.
      *  db = A handle to the Redis connection pool
+     * ----
+     Needs to be updated
      */
-    string readContent(string name, RedisDatabase db)
+    string[string] readContent(string name, RedisDatabase db)
     {
-        if (!(name in contentHash))
+        string[string] contentHash;
+        RedisHash!string dbHash = db.getAsHash(name);
+
+        // Refuse to read content which was not picked up by the directory scan
+        if (!(name in contentSet))
             throw new HTTPStatusException(HTTPStatus.notFound);
 
-        string text;
-
-        if (contentHash[name]) {
-            text = db.get(name);
-            if (!text)
-                contentHash["name"] = false;
+        // Check for content item in the DB
+        if (contentSet[name]) {
+            if (!db.exists(name))
+                contentSet["name"] = false;
         }
 
-        if (!contentHash[name]) {
+        // No valid entry in the DB exists, create one
+        if (!contentSet[name]) {
            string path = contentDir ~ name ~ ".md";
             if (!exists(path)) {
-                contentHash[name] = false;
+                contentSet[name] = false;
                 throw new HTTPStatusException(HTTPStatus.notFound);
             }
 
-            text = parseMarkdown(readText(path));
-            contentHash[name] = true;
-            db.set(name, text);
+            contentHash = parseContent(readText(path));
+
+            // Explicitly set keys to promise safety
+            dbHash["title"] = contentHash.get("title", "");
+            dbHash["description"] = contentHash.get("description", "");
+            dbHash["abstract"] = contentHash.get("abstract", "");
+            dbHash["date"] = contentHash.get("date", "");
+            dbHash["body"] = contentHash.get("body", "");
+
+            contentSet[name] = true;
         }
 
-        return text;
+        // Inefficent when contentHash is already available, but safe
+        foreach(key, value; dbHash)
+            contentHash[key] = value;
+
+        return contentHash;
     }
 
     void getIndex(HTTPServerRequest req, HTTPServerResponse res, ViewData data)
@@ -153,29 +211,41 @@ class ContentInterface {
     {
         import std.algorithm: filter, startsWith;
 
+        string[string][string] contents;
         string prefix = req.path[1..($-1)];
-        auto list = contentHash.byKey
+
+        auto list = contentSet.byKey
             .filter!(a => startsWith(a, prefix));
 
-        res.render!("listing.dt", list, prefix);
+        foreach(name; list)
+            contents[name] = readContent(name, data.db);
+
+        res.render!("listing.dt", contents, prefix);
     }
 
     void getContent(HTTPServerRequest req, HTTPServerResponse res, ViewData data)
     {
-        string content = readContent(req.path[1..$], data.db);
+        string[string] content = readContent(req.path[1..$], data.db);
         res.render!("content.dt", content);
     }
 
+    void getPrivacy(HTTPServerRequest req, HTTPServerResponse res, ViewData data)
+    {
+        string[string] content = readContent(req.path[1..$], data.db);
+        res.render!("content.dt", content);
+    }
     /**
      * Scans a directory for markdown documents
      *
      * Ignores filenames beginning with an uppercase letter. Returns a listing of
      * files found in the directory, stripping the base path and the file extension.
      *
+     * Filenames beginning with an uppercase letter are ignored.
+     *
      * Params:
      *  dir = The path (relative or absolute) to the directory to scan.
      */
-    private string[] getcontentHash(const string dir)
+    private string[] getcontentSet(const string dir)
     {
         import std.algorithm: filter;
         import std.array: array;

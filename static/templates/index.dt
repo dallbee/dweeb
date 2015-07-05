@@ -10,4 +10,4 @@ block content
         h1 Featured Articles
         //-input(type='text', name='search')
 
-        p I am a computer engineering student with a fondness for optimization, security, robotics, and software architecture. Have a look at my <a href="/resume"> résumé.
+        p I am a computer engineering student with a fondness for optimization, security, robotics, and software architecture. Have a look at my
