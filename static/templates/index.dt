@@ -16,6 +16,6 @@ block content
         time #{ article["date"] }
 
     section
-        h2 #{ content["title"] }
-        p !{ content["abstract"] }
-        time #{ article["date"] }
+        h2 #{ about["title"] }
+        p !{ about["abstract"] }
+        time #{ about["date"] }

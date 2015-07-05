@@ -27,7 +27,7 @@ shared static this()
 
     // Load interface routes
     //auto manageInterface = new ManageInterface;
-    auto contentInterface = new ContentInterface;
+    auto contentInterface = new ContentInterface(data.db);
 
     // Interface routing assignments
     router.any("*", contentInterface.register(data));

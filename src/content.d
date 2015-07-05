@@ -12,7 +12,6 @@ import view;
 
 class ContentInterface {
 
-    private bool[string] contentSet;
     string contentDir = "content/";
 
     URLRouter register(ViewData data, string prefix = null)
@@ -23,26 +22,25 @@ class ContentInterface {
         router.get("/projects", mixin(routeDelegate!"getListing"));
         router.get("/project/:project", mixin(routeDelegate!"getContent"));
         router.get("/resources", mixin(routeDelegate!"getContent"));
-        router.get("/about", mixin(routeDelegate!"getContent"));
         router.get("/privacy", mixin(routeDelegate!"getPrivacy"));
         router.get("/", mixin(routeDelegate!"getIndex"));
 
         return router;
     }
 
-    this()
+    this(RedisDatabase db)
     {
-        generateContentSet(contentDir);
+        generateContentCache(contentDir, db);
 
         runTask({
-            watchContent();
+            watchContent(db);
         });
     }
 
     /**
      * Listen for changes to content directory, and update caches appropriately.
      */
-    void watchContent()
+    void watchContent(RedisDatabase db)
     {
         DirectoryWatcher watcher;
         DirectoryChange[] changes;
@@ -52,7 +50,7 @@ class ContentInterface {
         while (true) {
             watcher.readChanges(changes);
             foreach(c; changes)
-                updateContentSet(c);
+                updateContentCache(c, db);
         }
     }
 
@@ -66,45 +64,43 @@ class ContentInterface {
      *  change = The type of modification that was made, and the path to the
      *      respective file.
      */
-    void updateContentSet(DirectoryChange change)
+    void updateContentCache(DirectoryChange change, RedisDatabase db)
     {
-        string name = change.path.toString[contentDir.length..$];
-        if (!isLower(name[0]) || !endsWith(name, ".md"))
+        uint pos = cast(uint)contentDir.length;
+        string name = change.path.toString;
+
+        if (!isFile(name) || !isLower(name[pos]) || !endsWith(name, ".md"))
             return;
 
-        name = stripExtension(name);
+        name = stripExtension(name[pos..$]);
+        string type = name[0..max(name.indexOf('/'), 0)];
 
         switch (change.type) {
             case DirectoryChangeType.added:
-                contentSet[name] = false;
+                db.zadd("list:" ~ type, readContent(name, db)["date"], name);
                 break;
             case DirectoryChangeType.modified:
-                contentSet[name] = false;
+                db.del(name);
+                db.zadd("list:" ~ type, readContent(name, db)["date"], name);
                 break;
             case DirectoryChangeType.removed:
-                contentSet.remove(name);
+                db.del(name);
+                db.zrem("list:" ~ type, name);
                 break;
             default:
         }
     }
 
-    /**
-     * Inserts the list of content files into the contentSet.
-     *
-     * This operation destroys the existing contentSet.
-     *
-     * Params:
-     *  dir = The path (relative or absolute) to the directory to scan
-     */
-    void generateContentSet(const string dir)
+    // Parallelize?
+    void generateContentCache(string dir, RedisDatabase db)
     {
-        bool[string] tmpList;
+        DirectoryChange change;
 
-        foreach(s; getcontentSet(dir))
-            tmpList[s] = false;
-
-        tmpList.rehash;
-        contentSet = tmpList;
+        foreach(path; dirEntries(dir, SpanMode.depth)) {
+            change.path = Path(path);
+            change.type = DirectoryChangeType.added;
+            updateContentCache(change, db);
+        }
     }
 
     /**
@@ -165,24 +161,19 @@ class ContentInterface {
      */
     string[string] readContent(string name, RedisDatabase db)
     {
+        import std.datetime;
         string[string] contentHash;
         RedisHash!string dbHash = db.getAsHash(name);
 
         // Refuse to read content which was not picked up by the directory scan
-        if (!(name in contentSet))
+        if (db.zscore("list:" ~ name[0..max(name.indexOf('/'), 0)], name).empty())
             throw new HTTPStatusException(HTTPStatus.notFound);
 
         // Check for content item in the DB
-        if (contentSet[name]) {
-            if (!db.exists(name))
-                contentSet["name"] = false;
-        }
-
-        // No valid entry in the DB exists, create one
-        if (!contentSet[name]) {
-           string path = contentDir ~ name ~ ".md";
+        if (!db.exists(name)) {
+            string path = contentDir ~ name ~ ".md";
             if (!exists(path)) {
-                contentSet[name] = false;
+                db.del(name);
                 throw new HTTPStatusException(HTTPStatus.notFound);
             }
 
@@ -192,10 +183,16 @@ class ContentInterface {
             dbHash["title"] = contentHash.get("title", "");
             dbHash["description"] = contentHash.get("description", "");
             dbHash["abstract"] = contentHash.get("abstract", "");
-            dbHash["date"] = contentHash.get("date", "");
             dbHash["body"] = contentHash.get("body", "");
 
-            contentSet[name] = true;
+            try {
+                dbHash["date"] = Date()
+                    .fromSimpleString(contentHash.get("date", ""))
+                    .toISOString;
+            } catch (Exception exc) {
+                logError("Invalid date specified in %s", path);
+                dbHash["date"] = "";
+            }
         }
 
         // Inefficent when contentHash is already available, but safe
@@ -207,27 +204,29 @@ class ContentInterface {
 
     void getIndex(HTTPServerRequest req, HTTPServerResponse res, ViewData data)
     {
-        /*view.pageList = view.loadList(redis.send("zrange", "list:index", 0, 5));
-        foreach(e; view.pageList)
-            view.data[e] = view.loadHmap(redis.send("hgetall", "page:" ~ e));
-        */
-        res.render!("index.dt");
+        string[string] article;
+        string[string] project;
+        string[string] about;
+        string[string] content;
+
+        article = readContent(data.db.zrevRange("list:article", 0, 0).front, data.db);
+        project = readContent(data.db.zrevRange("list:project", 0, 0).front, data.db);
+        about = readContent("about", data.db);
+        content = readContent("index", data.db);
+
+        res.render!("index.dt", article, project, about, content);
     }
 
     void getListing(HTTPServerRequest req, HTTPServerResponse res, ViewData data)
     {
-        import std.algorithm: filter, startsWith;
-
+        string type = req.path[1..($-1)];
         string[string][string] contents;
-        string prefix = req.path[1..($-1)];
 
-        auto list = contentSet.byKey
-            .filter!(a => startsWith(a, prefix));
-
-        foreach(name; list)
+        auto zrange = data.db.zrevRange("list:" ~ type, 0, -1);
+        foreach(name; zrange)
             contents[name] = readContent(name, data.db);
 
-        res.render!("listing.dt", contents, prefix);
+        res.render!("listing.dt", contents, type);
     }
 
     void getContent(HTTPServerRequest req, HTTPServerResponse res, ViewData data)
@@ -240,28 +239,5 @@ class ContentInterface {
     {
         string[string] content = readContent(req.path[1..$], data.db);
         res.render!("content.dt", content);
-    }
-    /**
-     * Scans a directory for markdown documents
-     *
-     * Ignores filenames beginning with an uppercase letter. Returns a listing of
-     * files found in the directory, stripping the base path and the file extension.
-     *
-     * Filenames beginning with an uppercase letter are ignored.
-     *
-     * Params:
-     *  dir = The path (relative or absolute) to the directory to scan.
-     */
-    private string[] getcontentSet(const string dir)
-    {
-        import std.algorithm: filter;
-        import std.array: array;
-
-        uint pos = cast(uint)dir.length;
-
-        return dirEntries(dir, SpanMode.depth)
-            .filter!(a => a.isFile && endsWith(a.name, ".md") && isLower(a[pos]))
-            .map!(a => stripExtension(a.name)[pos..$])
-            .array;
     }
 }
