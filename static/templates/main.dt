@@ -17,11 +17,12 @@ html
             nav
                 ul
                     li
-                        strong Allbee.org
+                        strong
+                            a(href='/') Allbee.org
                     li
-                        a(href='/articles/') Writings
+                        a(href='/articles') Writings
                     li
-                        a(href='/projects/') Projects
+                        a(href='/projects') Projects
                     li
                         a(href='/resources') Resources
                     li
@@ -38,8 +39,7 @@ html
 
             content
                 block content
+                footer
+                    p Copyright &copy; 2014-$year by Dylan Allbee
 
-            footer
-                p Copyright &copy; 2014-$year by Dylan Allbee
-
-        script(src="/dist/js/main.js")
+        script(src="/js/prism.js")

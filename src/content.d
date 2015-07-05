@@ -11,7 +11,7 @@ import view;
 
 class ContentInterface {
 
-    private bool[string] contentList;
+    private bool[string] contentHash;
     string contentDir = "content/";
 
     URLRouter register(ViewData data, string prefix = null)
@@ -29,7 +29,7 @@ class ContentInterface {
 
     this()
     {
-        generateContentList(contentDir);
+        generateContentHash(contentDir);
 
         runTask({
             watchContent();
@@ -49,19 +49,19 @@ class ContentInterface {
         while(true) {
             watcher.readChanges(changes);
             foreach(c; changes)
-                updateContentList(c);
+                updateContentHash(c);
         }
     }
 
     /**
-     * Updates the contentList cache to reflect any changes to files within the
+     * Updates the contentHash cache to reflect any changes to files within the
      * content folder.
      *
      * Params:
      *  change = The type of modification that was made, and the path to the
      *      respective file.
      */
-    void updateContentList(DirectoryChange change)
+    void updateContentHash(DirectoryChange change)
     {
         string name = stripExtension(change.path.toString[contentDir.length..$]);
         if (!isLower(name[0]) || !endsWith(name, ".md"))
@@ -69,13 +69,13 @@ class ContentInterface {
 
         switch(change.type) {
             case DirectoryChangeType.added:
-                contentList[name] = false;
+                contentHash[name] = false;
                 break;
             case DirectoryChangeType.modified:
-                contentList[name] = false;
+                contentHash[name] = false;
                 break;
             case DirectoryChangeType.removed:
-                contentList.remove(name);
+                contentHash.remove(name);
                 break;
             default:
         }
@@ -84,20 +84,20 @@ class ContentInterface {
     /**
      * Inserts the list of content files into the contentHash.
      *
-     * This operation destroys the existing contentList.
+     * This operation destroys the existing contentHash.
      *
      * Params:
      *  dir = The path (relative or absolute) to the directory to scan
      */
-    void generateContentList(const string dir)
+    void generateContentHash(const string dir)
     {
         bool[string] tmpList;
 
-        foreach(s; getContentList(dir))
+        foreach(s; getcontentHash(dir))
             tmpList[s] = false;
 
         tmpList.rehash;
-        contentList = tmpList;
+        contentHash = tmpList;
     }
 
     /**
@@ -114,26 +114,26 @@ class ContentInterface {
      */
     string readContent(string name, RedisDatabase db)
     {
-        if (!(name in contentList))
+        if (!(name in contentHash))
             throw new HTTPStatusException(HTTPStatus.notFound);
 
         string text;
 
-        if (contentList[name]) {
+        if (contentHash[name]) {
             text = db.get(name);
             if (!text)
-                contentList["name"] = false;
+                contentHash["name"] = false;
         }
 
-        if (!contentList[name]) {
+        if (!contentHash[name]) {
            string path = contentDir ~ name ~ ".md";
             if (!exists(path)) {
-                contentList[name] = false;
+                contentHash[name] = false;
                 throw new HTTPStatusException(HTTPStatus.notFound);
             }
 
             text = parseMarkdown(readText(path));
-            contentList[name] = true;
+            contentHash[name] = true;
             db.set(name, text);
         }
 
@@ -151,7 +151,13 @@ class ContentInterface {
 
     void getListing(HTTPServerRequest req, HTTPServerResponse res, ViewData data)
     {
-        res.render!("listing.dt");
+        import std.algorithm: filter, startsWith;
+
+        string prefix = req.path[1..($-1)];
+        auto list = contentHash.byKey
+            .filter!(a => startsWith(a, prefix));
+
+        res.render!("listing.dt", list, prefix);
     }
 
     void getContent(HTTPServerRequest req, HTTPServerResponse res, ViewData data)
@@ -169,7 +175,7 @@ class ContentInterface {
      * Params:
      *  dir = The path (relative or absolute) to the directory to scan.
      */
-    private string[] getContentList(const string dir)
+    private string[] getcontentHash(const string dir)
     {
         import std.algorithm: filter;
         import std.array: array;

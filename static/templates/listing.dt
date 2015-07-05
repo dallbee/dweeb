@@ -1,10 +1,14 @@
 extends main
 
 block meta
-    title 
+    title
     meta(name='description', content='content')
 
 block content
+    h1 Articles
+    - import std.algorithm;
+    - foreach(e; list)
+        a(href=e) #{ e[(prefix.length + 1)..$] }
 
 
 
