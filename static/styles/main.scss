@@ -7,8 +7,8 @@ body {
     line-height: modular-scale(1);
     font-size: modular-scale(0);
     font-family: 'Raleway';
-    color: $text;
-    background: #fffff2;
+    color: color($primary, 800);
+    background: color($primary, 50);
     margin: 0;
 }
 
@@ -34,15 +34,6 @@ nav {
         list-style-type: none;
     }
 
-    a {
-        color: #444;
-    }
-
-    a:hover {
-        color: $link;
-        text-decoration: underline;
-    }
-
     @include media($mobile) {
         display: none;
     }
@@ -57,7 +48,11 @@ content {
     }
 }
 
-h1,h2,h3 {font-weight: 700; margin: 0}
+h1,h2,h3 {
+    font-weight: 700;
+    margin: 0;
+    color: color($secondary, 800);
+}
 
 h1 {
     font-size: modular-scale(2);
@@ -80,13 +75,13 @@ pre {
 
 code {
     font-size: 12px;
-    font-family: 'Source Code Pro';
+    font-family: 'Roboto Mono';
     line-height: modular-scale(0);
 }
 
 :not(pre) > code,
 pre[class*="language-"] {
-    background: #f5f2f0;
+    background: color($secondary, 50);
 }
 
 :not(pre) > code {
@@ -99,9 +94,21 @@ p {
 }
 
 a {
+    color: color($secondary, 600);
     text-decoration: none;
+    font-style: italic;
+}
+
+a:hover {
+    color: color($secondary, 700);
+    text-decoration: underline;
+}
+
+strong {
+    color: color($secondary, 800);
+    font-style: normal;
 }
 
 @include selection {
-    background: #ddddff;
+    background: color($secondary, 100);
 }
