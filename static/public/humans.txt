@@ -38,6 +38,6 @@
     Address: www.allbee.org
     Language: English
     Standards: HTML5, CSS3, CommonMark
-    Components: D, Lwan, JavaScript, Sass, Bourbon, Neat, Normalize
+    Components: D, Lwan, JavaScript, Sass, Bourbon, Neat, Prism.js, Normalize
     Server: Debian
     Tools: Sublime Text
