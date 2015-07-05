@@ -1,6 +1,7 @@
 @import "bourbon/bourbon";
 @import "variables";
 @import "neat/neat";
+@import "prism";
 
 body {
     line-height: modular-scale(1);
@@ -13,19 +14,16 @@ body {
 
 body > div {
     @include outer-container;
-    margin: 30px 0 0 50px;
+    margin: modular-scale(4) 0 0 modular-scale(4);
+
+    @include media($mobile) {
+        margin: modular-scale(1);
+    }
 }
 
 nav {
     @include span-columns(2);
-    @include shift(1);
-    @include media($mobile) {
-        @include span-columns(3);
-    }
-
     margin-top: 2 * modular-scale(3);
-
-    text-align: left;
 
     ul {
         padding: 0;
@@ -37,7 +35,6 @@ nav {
     }
 
     a {
-        text-decoration: none;
         color: #444;
     }
 
@@ -45,42 +42,66 @@ nav {
         color: $link;
         text-decoration: underline;
     }
+
+    @include media($mobile) {
+        display: none;
+    }
 }
 
 content {
     text-align: justify;
-    @include span-columns(9);
-    @include omega();
-    @include media($mobile) {
-        @include span-columns(3);
+
+    @include media($full) {
+        @include span-columns(10);
+        @include omega();
     }
 }
 
-footer {
-    text-align: center;
-    @include span-columns(12);
-    @include media($mobile) {
-        @include span-columns(3);
-    }
-}
+h1,h2,h3 {font-weight: 700; margin: 0}
 
-h1,h2,h3 {line-height:1.2; font-weight: 700; margin-top: 0}
 h1 {
     font-size: modular-scale(2);
     line-height: modular-scale(3);
-    margin: 0;
 }
+
 h2 {
     font-size: modular-scale(1);
     line-height: modular-scale(2);
-    margin: 0;
+}
+
+h3 {
+    font-size: modular-scale(0);
+    line-height: modular-scale(1);
+}
+
+pre {
+    padding: modular-scale(0);
 }
 
 code {
-    font-size: modular-scale(0);
+    font-size: 12px;
     font-family: 'Source Code Pro';
+    line-height: modular-scale(0);
+}
+
+:not(pre) > code,
+pre[class*="language-"] {
+    background: #f5f2f0;
+}
+
+:not(pre) > code {
+    padding: .1em;
+    border-radius: .3em;
 }
 
 p {
     margin-top: 0;
+}
+
+a {
+    text-decoration: none;
+}
+
+@include selection {
+    background: #ddddff;
 }

@@ -1,11 +1,13 @@
 @import "colors";
+@import "neat/neat";
 
-// Overrides Neat's default
-$max-width: em(900);
+$max-width: em(940);
+$breakpoint: em(1170);
 $modular-scale-base: 1.125em;
 
 // Breakpoints
-$mobile: new-breakpoint(max-width 500px 4);
+$mobile: new-breakpoint(max-width $breakpoint 4);
+$full: new-breakpoint(min-width $breakpoint 12);
 
 // Colors
 $text: color($grey, 800);

@@ -1,0 +1,51 @@
+@import "bourbon/bourbon";
+@import "variables";
+@import "neat/neat";
+@import "prism";
+
+body {
+    line-height: modular-scale(1);
+    font-size: modular-scale(0);
+    font-family: 'Raleway';
+    color: $text;
+    background: #fffff2;
+    margin: 0;
+}
+
+body > div {
+    margin: modular-scale(1);
+}
+
+content {
+    text-align: justify;
+}
+
+h1,h2,h3 {font-weight: 700; margin: 0}
+
+h1 {
+    font-size: modular-scale(2);
+    line-height: modular-scale(3);
+}
+
+h2 {
+    font-size: modular-scale(1);
+    line-height: modular-scale(2);
+}
+
+h3 {
+    font-size: modular-scale(0);
+    line-height: modular-scale(1);
+}
+
+code {
+    font-size: 12px;
+    font-family: 'Source Code Pro';
+}
+
+p {
+    margin-top: 0;
+}
+
+a {
+    text-decoration: none;
+}
