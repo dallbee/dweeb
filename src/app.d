@@ -17,7 +17,7 @@ shared static this()
     auto data = new ViewData;
 
     // Database initialization
-    auto redis = new RedisClient("allbee.org");
+    auto redis = new RedisClient;
     data.db = redis.getDatabase(0);
     data.db.deleteAll();
 
