@@ -42,8 +42,6 @@ shared static this()
  */
 void preRequest(HTTPServerRequest req, HTTPServerResponse res, ViewData data)
 {
-    data.req = req;
-    data.res = res;
 }
 
 /**

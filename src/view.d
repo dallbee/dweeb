@@ -11,30 +11,19 @@ extern (C) char * cmark_markdown_to_html(const char *, int, int);
 
 template routeDelegate(string route)
 {
-    const char[] routeDelegate = 
+    const char[] routeDelegate =
         `delegate (HTTPServerRequest req, HTTPServerResponse res) => ` ~ route ~ `(req, res, data)`;
 }
 
 class ViewData
 {
-    DateTime date;
     RedisDatabase db;
-    HTTPServerRequest req;
-    HTTPServerResponse res;
-
-    this()
-    {
-        date = cast(DateTime)Clock.currTime;
-    }
-
-    string timestamp()
-    {
-        return removechars(date.toISOString, "^0-9");
-    }
 }
 
-string parseMarkdown(string text)
+string parseMarkdown(string content)
 {
-    text = removechars(text, "\r");
-    return cast(string)cmark_markdown_to_html(text.toStringz, cast(int)text.length, 0).fromStringz;
+    import std.conv;
+
+    content = content.removechars("\r");
+    return cmark_markdown_to_html(content.toStringz, content.length.to!int, 0).to!string;
 }

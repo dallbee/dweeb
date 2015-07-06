@@ -5,10 +5,10 @@ import app;
 import std.file;
 import std.path;
 import std.ascii;
+import std.parallelism;
 import vibe.db.redis.redis;
 import vibe.db.redis.types;
 import view;
-
 
 class ContentInterface {
 
@@ -28,9 +28,19 @@ class ContentInterface {
         return router;
     }
 
+    /**
+     * Initializes a ContentInterface instance.
+     *
+     * Should not be initialized more than once, as the class is not context
+     * independent.
+     *
+     * Params:
+     *  db = A database instance to a redis connection pool
+     */
     this(RedisDatabase db)
     {
         generateContentCache(contentDir, db);
+        logInfo("Content parsing complete.");
 
         runTask({
             watchContent(db);
@@ -38,9 +48,64 @@ class ContentInterface {
     }
 
     /**
-     * Listen for changes to content directory, and update caches appropriately.
+     * Renders the index page
+     *
+     * Provides the index template with a "featured" article and project, as well
+     * as metadata specified by index.md, and the data for the about.md file.
      */
-    void watchContent(RedisDatabase db)
+    void getIndex(HTTPServerRequest req, HTTPServerResponse res, ViewData data)
+    {
+        string[string] article = readContent(data.db.zrevRange("list:article", 0, 0).front, data.db);
+        string[string] project = readContent(data.db.zrevRange("list:project", 0, 0).front, data.db);
+        string[string] about = readContent("about", data.db);
+        string[string] content = readContent("index", data.db);
+
+        res.render!("index.dt", article, project, about, content);
+    }
+
+    /**
+     * Renders a listing of a content type specified by the request url.
+     *
+     * Lists are sorted by publish date in descending order.
+     */
+    void getListing(HTTPServerRequest req, HTTPServerResponse res, ViewData data)
+    {
+        immutable type = req.path[1..($-1)];
+        string[string][string] contents;
+
+        // Currently lacks a lookup limit. Future improvement: pagination.
+        auto zrange = data.db.zrevRange("list:" ~ type, 0, -1);
+        foreach(name; parallel(zrange))
+            contents[name] = readContent(name, data.db);
+
+        res.render!("listing.dt", contents, type);
+    }
+
+    /**
+     * Renders the content item specified by the request url.
+     */
+    void getContent(HTTPServerRequest req, HTTPServerResponse res, ViewData data)
+    {
+        string[string] content = readContent(req.path[1..$], data.db);
+        res.render!("content.dt", content);
+    }
+
+    /**
+     * Special handler for the privacy page, to avoid recursive rendering.
+     */
+    void getPrivacy(HTTPServerRequest req, HTTPServerResponse res, ViewData data)
+    {
+        string[string] content = readContent(req.path[1..$], data.db);
+        res.render!("content.dt", content);
+    }
+
+    /**
+     * Listen for changes to content directory, and update caches appropriately.
+     *
+     * Params:
+     *  db = A database instance to a redis connection pool
+     */
+    private void watchContent(RedisDatabase db)
     {
         DirectoryWatcher watcher;
         DirectoryChange[] changes;
@@ -49,41 +114,45 @@ class ContentInterface {
 
         while (true) {
             watcher.readChanges(changes);
-            foreach(c; changes)
+            foreach(c; parallel(changes))
                 updateContentCache(c, db);
         }
     }
 
     /**
-     * Updates the contentSet cache to reflect any changes to files within the
-     * content folder.
+     * Updates the contentSet cache to reflect any changes to markdown files
+     * within the content folder.
      *
      * Filenames beginning with an uppercase letter are ignored.
      *
      * Params:
      *  change = The type of modification that was made, and the path to the
      *      respective file.
+     *  db = A database instance to a redis connection pool
      */
-    void updateContentCache(DirectoryChange change, RedisDatabase db)
+    private void updateContentCache(DirectoryChange change, RedisDatabase db)
     {
-        uint pos = cast(uint)contentDir.length;
+        immutable pos = contentDir.length;
         string name = change.path.toString;
 
         if (!isFile(name) || !isLower(name[pos]) || !endsWith(name, ".md"))
             return;
 
         name = stripExtension(name[pos..$]);
-        string type = name[0..max(name.indexOf('/'), 0)];
+        immutable type = name[0..max(name.indexOf('/'), 0)];
 
         switch (change.type) {
             case DirectoryChangeType.added:
+                logInfo("Found new file: %s. Adding to cache.", change.path);
                 db.zadd("list:" ~ type, readContent(name, db)["date"], name);
                 break;
             case DirectoryChangeType.modified:
+                logInfo("File %s was modified. Updating cache.", change.path);
                 db.del(name);
                 db.zadd("list:" ~ type, readContent(name, db)["date"], name);
                 break;
             case DirectoryChangeType.removed:
+                logInfo("File %s was removed. Clearing cache.", change.path);
                 db.del(name);
                 db.zrem("list:" ~ type, name);
                 break;
@@ -91,12 +160,19 @@ class ContentInterface {
         }
     }
 
-    // Parallelize?
-    void generateContentCache(string dir, RedisDatabase db)
+    /**
+     * Reads the content directory and parses all documents for metadata
+     * and markdown. Results are stored in the Redis instance
+     *
+     * Params:
+     *  dir = The content directory
+     *  db = A database instance to a redis connection pool
+     */
+    private void generateContentCache(string dir, RedisDatabase db)
     {
         DirectoryChange change;
 
-        foreach(path; dirEntries(dir, SpanMode.depth)) {
+        foreach(path; parallel(dirEntries(dir, SpanMode.depth))) {
             change.path = Path(path);
             change.type = DirectoryChangeType.added;
             updateContentCache(change, db);
@@ -115,13 +191,12 @@ class ContentInterface {
      * Params:
      *  content = The fulltext string to parse.
      */
-    string[string] parseContent(string content)
+    private string[string] parseContent(string content)
     {
         string[string] data;
         import std.string;
         import std.regex;
 
-        string line;
         ulong end;
 
         // Matches [key] value
@@ -159,7 +234,7 @@ class ContentInterface {
      *      an extension.
      *  db = A handle to the Redis connection pool
      */
-    string[string] readContent(string name, RedisDatabase db)
+    private string[string] readContent(string name, RedisDatabase db)
     {
         import std.datetime;
         string[string] contentHash;
@@ -195,49 +270,9 @@ class ContentInterface {
             }
         }
 
-        // Inefficent when contentHash is already available, but safe
         foreach(key, value; dbHash)
             contentHash[key] = value;
 
         return contentHash;
-    }
-
-    void getIndex(HTTPServerRequest req, HTTPServerResponse res, ViewData data)
-    {
-        string[string] article;
-        string[string] project;
-        string[string] about;
-        string[string] content;
-
-        article = readContent(data.db.zrevRange("list:article", 0, 0).front, data.db);
-        project = readContent(data.db.zrevRange("list:project", 0, 0).front, data.db);
-        about = readContent("about", data.db);
-        content = readContent("index", data.db);
-
-        res.render!("index.dt", article, project, about, content);
-    }
-
-    void getListing(HTTPServerRequest req, HTTPServerResponse res, ViewData data)
-    {
-        string type = req.path[1..($-1)];
-        string[string][string] contents;
-
-        auto zrange = data.db.zrevRange("list:" ~ type, 0, -1);
-        foreach(name; zrange)
-            contents[name] = readContent(name, data.db);
-
-        res.render!("listing.dt", contents, type);
-    }
-
-    void getContent(HTTPServerRequest req, HTTPServerResponse res, ViewData data)
-    {
-        string[string] content = readContent(req.path[1..$], data.db);
-        res.render!("content.dt", content);
-    }
-
-    void getPrivacy(HTTPServerRequest req, HTTPServerResponse res, ViewData data)
-    {
-        string[string] content = readContent(req.path[1..$], data.db);
-        res.render!("content.dt", content);
     }
 }
