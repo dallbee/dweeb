@@ -8,6 +8,7 @@ shared static this()
     // Initialize resources
     //setLogFile("log.txt", LogLevel.info);
     auto server = new HTTPServerSettings;
+    server.bindAddresses = ["0.0.0.0"];
     server.port = 8000;
     server.errorPageHandler = toDelegate(&errorPage);
     server.useCompressionIfPossible = true;
