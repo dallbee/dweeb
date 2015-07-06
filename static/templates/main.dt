@@ -38,6 +38,7 @@ html
             content
                 block content
                 footer
-                    p Copyright &copy; 2014-$year by Dylan Allbee
+                    - import std.datetime;
+                    p Copyright &copy; 2014-#{ (cast(Date)Clock.currTime).year } by Dylan Allbee
 
         script(src="/js/prism.js")

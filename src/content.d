@@ -39,7 +39,12 @@ class ContentInterface {
      */
     this(RedisDatabase db)
     {
-        generateContentCache(contentDir, db);
+        try {
+            generateContentCache(contentDir, db);
+        } catch(Exception exc) {
+            // This is a temporary workaround.
+        }
+
         logInfo("Content parsing complete.");
 
         runTask({
@@ -114,7 +119,7 @@ class ContentInterface {
 
         while (true) {
             watcher.readChanges(changes);
-            foreach(c; parallel(changes))
+            foreach(c; changes)
                 updateContentCache(c, db);
         }
     }
@@ -135,7 +140,7 @@ class ContentInterface {
         immutable pos = contentDir.length;
         string name = change.path.toString;
 
-        if (!isFile(name) || !isLower(name[pos]) || !endsWith(name, ".md"))
+        if (!isLower(name[pos]) || !endsWith(name, ".md"))
             return;
 
         name = stripExtension(name[pos..$]);
