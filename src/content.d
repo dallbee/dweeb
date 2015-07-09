@@ -190,8 +190,8 @@ class ContentInterface {
      * Metadata should be in the following format:
      * [key] value
      *
-     * The first line not matching that format will stop the parse, and the
-     * rest of the document is then treated as markdown content.
+     * Metadata must be enclosed by an html comment <!-- --> and the beginning
+     * and end tokens must be on their own line.
      *
      * Params:
      *  content = The fulltext string to parse.
@@ -201,26 +201,29 @@ class ContentInterface {
         string[string] data;
         import std.string;
         import std.regex;
-
-        ulong end;
+        import std.algorithm;
 
         // Matches [key] value
-        auto pattern = ctRegex!(`\[(\w*)\] *(.*)`);
+        auto metaRegex = ctRegex!(`\[(\w*)\] *(.*)`);
+        ulong end;
 
-        while (true) {
+        bool hasMeta = content.startsWith("<!--");
+
+        while (hasMeta) {
+            hasMeta = !content.startsWith("-->");
             end = content[0..$].indexOf('\n');
 
             // Reminder: end is unsigned
             if (end >= content.length - 1)
                 break;
 
-            auto match = matchFirst(content[0..end++], pattern);
+            auto match = matchFirst(content[0..end++], metaRegex);
+            content = content[end..$];
 
             if (match.empty)
-                break;
+                continue;
 
             data[match[1]] = match[2];
-            content = content[end..$];
         }
 
         data["body"] = parseMarkdown(content);
