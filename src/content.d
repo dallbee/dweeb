@@ -8,21 +8,23 @@ import std.ascii;
 import std.parallelism;
 import vibe.db.redis.redis;
 import vibe.db.redis.types;
+import mustache;
 import view;
+
+alias MustacheEngine!(string) Mustache;
 
 class ContentInterface {
 
     string contentDir = "content/";
 
-    URLRouter register(ViewData data, string prefix = null)
+    URLRouter register(ViewData view, string prefix = null)
     {
         auto router = new URLRouter(prefix);
         router.get("/articles", mixin(routeDelegate!"getListing"));
         router.get("/article/:article", mixin(routeDelegate!"getContent"));
         router.get("/projects", mixin(routeDelegate!"getListing"));
         router.get("/project/:project", mixin(routeDelegate!"getContent"));
-        router.get("/resources", mixin(routeDelegate!"getContent"));
-        router.get("/privacy", mixin(routeDelegate!"getPrivacy"));
+        router.get("/:content", mixin(routeDelegate!"getContent"));
         router.get("/", mixin(routeDelegate!"getIndex"));
 
         return router;
@@ -58,14 +60,14 @@ class ContentInterface {
      * Provides the index template with a "featured" article and project, as well
      * as metadata specified by index.md, and the data for the about.md file.
      */
-    void getIndex(HTTPServerRequest req, HTTPServerResponse res, ViewData data)
+    void getIndex(ViewData view)
     {
-        string[string] article = readContent(data.db.zrevRange("list:article", 0, 0).front, data.db);
-        string[string] project = readContent(data.db.zrevRange("list:project", 0, 0).front, data.db);
-        string[string] about = readContent("about", data.db);
-        string[string] content = readContent("index", data.db);
+        string[string] article = readContent(view.db.zrevRange("list:article", 0, 0).front, view.db);
+        string[string] project = readContent(view.db.zrevRange("list:project", 0, 0).front, view.db);
+        string[string] about = readContent("about", view.db);
+        string[string] content = readContent("index", view.db);
 
-        res.render!("index.dt", article, project, about, content);
+        view.res.render!("index.dt", article, project, about, content);
     }
 
     /**
@@ -73,35 +75,29 @@ class ContentInterface {
      *
      * Lists are sorted by publish date in descending order.
      */
-    void getListing(HTTPServerRequest req, HTTPServerResponse res, ViewData data)
+    void getListing(ViewData view)
     {
-        immutable type = req.path[1..($-1)];
+        immutable type = view.req.path[1..($-1)];
         string[string][string] contents;
 
         // Currently lacks a lookup limit. Future improvement: pagination.
-        auto zrange = data.db.zrevRange("list:" ~ type, 0, -1);
+        auto zrange = view.db.zrevRange("list:" ~ type, 0, -1);
         foreach(name; parallel(zrange))
-            contents[name] = readContent(name, data.db);
+            contents[name] = readContent(name, view.db);
 
-        res.render!("listing.dt", contents, type);
+        view.res.render!("listing.dt", contents, type);
     }
 
     /**
      * Renders the content item specified by the request url.
      */
-    void getContent(HTTPServerRequest req, HTTPServerResponse res, ViewData data)
+    void getContent(ViewData view)
     {
-        string[string] content = readContent(req.path[1..$], data.db);
-        res.render!("content.dt", content);
-    }
+        Mustache mustache;
 
-    /**
-     * Special handler for the privacy page, to avoid recursive rendering.
-     */
-    void getPrivacy(HTTPServerRequest req, HTTPServerResponse res, ViewData data)
-    {
-        string[string] content = readContent(req.path[1..$], data.db);
-        res.render!("content.dt", content);
+        string[string] content = readContent(view.req.path[1..$], view.db);
+        content["body"] = mustache.renderString(content["body"], view.context);
+        view.res.render!("content.dt", content);
     }
 
     /**

@@ -4,9 +4,10 @@
     "copyright": "Copyright © 2015, Dylan Allbee",
     "authors": ["dylan"],
     "dependencies": {
-        "vibe-d": "~>0.7.24-beta.3"
+        "vibe-d": "~>0.7.24-beta.3",
+        "mustache-d": "~>0.1.1"
     },
-    "versions": ["VibeDefaultMain"],
+    "versions": ["VibeDefaultMain", "VibeIdleCollect"],
     "stringImportPaths": ["static/templates/"],
     "libs": ["cmark"],
 }

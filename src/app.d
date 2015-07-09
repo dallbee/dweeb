@@ -14,12 +14,12 @@ shared static this()
     server.useCompressionIfPossible = true;
     server.serverString = "allbee";
 
-    auto data = new ViewData;
+    auto view = new ViewData;
 
     // Database initialization
     auto redis = new RedisClient;
-    data.db = redis.getDatabase(0);
-    data.db.deleteAll();
+    view.db = redis.getDatabase(0);
+    view.db.deleteAll();
 
     // Routing assignments
     auto router = new URLRouter;
@@ -28,10 +28,10 @@ shared static this()
 
     // Load interface routes
     //auto manageInterface = new ManageInterface;
-    auto contentInterface = new ContentInterface(data.db);
+    auto contentInterface = new ContentInterface(view.db);
 
     // Interface routing assignments
-    router.any("*", contentInterface.register(data));
+    router.any("*", contentInterface.register(view));
     router.get("*", serveStaticFiles("./static/public/"));
 
     // Begin the server
@@ -41,8 +41,20 @@ shared static this()
 /**
  * Hooks into the request before any other routing is done
  */
-void preRequest(HTTPServerRequest req, HTTPServerResponse res, ViewData data)
+void preRequest(ViewData view)
 {
+    import std.conv;
+    import std.stdio;
+
+    string agent = view.req.headers.get("User-Agent", "Unknown");
+    string browser = agent[lastIndexOf(agent, " ")+1..$].replace("/", " v");
+    string os = agent[indexOf(agent, ";")+1..lastIndexOf(agent, ";")].replace(";", "");
+
+    view.context["browser"] = browser;
+    view.context["ip"] = view.req.peer;
+    view.context["os"] = os;
+    view.context["referer"] = view.req.headers.get("Referer", "None");
+    view.context["cookies"] = view.req.headers.get("Cookies", "None");
 }
 
 /**
