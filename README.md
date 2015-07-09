@@ -41,11 +41,11 @@ Contributors
 ------------
 I'd like to thank the following people for making substantial contributions to this project in one way or another:
 
-Vijay Atwater-Van Ness [@XAMPP](https://github.com/XAMPP/)
-Corey Matyas [@coreymatyas](https://github.com/coreymatyas/)
-Mike Korcha [@mkorcha](https://github.com/mkorcha/)
+Vijay Atwater-Van Ness [@XAMPP](https://github.com/XAMPP/)  
+Corey Matyas [@coreymatyas](https://github.com/coreymatyas/)  
+Mike Korcha [@mkorcha](https://github.com/mkorcha/)  
 
 
 License
 -------
-Code written specifically for this project is released under the BSD 3-Clause license. Vibe.D is released under the MIT public license. libcmark is released under a variety of free and non-restrictive licenses, which you are encouraged to review in detail. TinyRedis is released under the ISC license.
+Code written specifically for this project is released under the BSD 3-Clause license. Vibe.D is released under the MIT public license. libcmark is released under a variety of free and non-restrictive licenses, which you are encouraged to review in detail.
