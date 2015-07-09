@@ -174,6 +174,7 @@ class ContentInterface {
         DirectoryChange change;
 
         foreach(path; parallel(dirEntries(dir, SpanMode.depth))) {
+
             change.path = Path(path);
             change.type = DirectoryChangeType.added;
             updateContentCache(change, db);
@@ -244,15 +245,12 @@ class ContentInterface {
         string[string] contentHash;
         RedisHash!string dbHash = db.getAsHash(name);
 
-        // Refuse to read content which was not picked up by the directory scan
-        if (db.zscore("list:" ~ name[0..max(name.indexOf('/'), 0)], name).empty())
-            throw new HTTPStatusException(HTTPStatus.notFound);
-
         // Check for content item in the DB
         if (!db.exists(name)) {
             string path = contentDir ~ name ~ ".md";
             if (!exists(path)) {
                 db.del(name);
+                db.zrem("list:" ~ name[0..max(name.indexOf('/'), 0)], name);
                 throw new HTTPStatusException(HTTPStatus.notFound);
             }
 

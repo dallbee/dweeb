@@ -46,9 +46,12 @@ void preRequest(ViewData view)
     import std.conv;
     import std.stdio;
 
+    /**
+SECURITY VULNERABILITY - these request headers can be set by the user, and so they need to be sanity checked.
+     */
     string agent = view.req.headers.get("User-Agent", "Unknown");
     string browser = agent[lastIndexOf(agent, ")")+2..$];
-    string os = agent[indexOf(agent, ";")+2..lastIndexOf(agent, ";")].replace(";", "");
+    string os = agent[indexOf(agent, ";")+2..lastIndexOf(agent, ";")];
 
     view.context["browser"] = browser;
     view.context["ip"] = view.req.headers.get("X-REAL-IP", view.req.peer);
