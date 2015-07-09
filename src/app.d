@@ -47,8 +47,8 @@ void preRequest(ViewData view)
     import std.stdio;
 
     string agent = view.req.headers.get("User-Agent", "Unknown");
-    string browser = agent[lastIndexOf(agent, " ")+1..$].replace("/", " v");
-    string os = agent[indexOf(agent, ";")+1..lastIndexOf(agent, ";")].replace(";", "");
+    string browser = agent[lastIndexOf(agent, ")")+2..$];
+    string os = agent[indexOf(agent, ";")+2..lastIndexOf(agent, ";")].replace(";", "");
 
     view.context["browser"] = browser;
     view.context["ip"] = view.req.headers.get("X-REAL-IP", view.req.peer);
