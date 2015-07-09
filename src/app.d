@@ -51,7 +51,7 @@ void preRequest(ViewData view)
     string os = agent[indexOf(agent, ";")+1..lastIndexOf(agent, ";")].replace(";", "");
 
     view.context["browser"] = browser;
-    view.context["ip"] = view.req.peer;
+    view.context["ip"] = view.req.headers.get("X-REAL-IP", view.req.peer);
     view.context["os"] = os;
     view.context["referer"] = view.req.headers.get("Referer", "None");
     view.context["cookies"] = view.req.headers.get("Cookies", "None");
